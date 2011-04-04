@@ -11,6 +11,7 @@ handlers:
 - url: /(.*\.(gif|png|jpg|ico|html))
   static_files: static/\1
   upload: static/(.*\.(gif|png|jpg|ico))
+  login: admin
 - url: /feed
   script: feed.py
 - url: .*
