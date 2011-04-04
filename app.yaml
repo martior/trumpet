@@ -1,0 +1,20 @@
+application: skabb-radio
+version: 1
+runtime: python
+api_version: 1
+
+
+
+handlers:
+- url: /static
+  static_dir: static
+- url: /(.*\.(gif|png|jpg|ico|html))
+  static_files: static/\1
+  upload: static/(.*\.(gif|png|jpg|ico))
+- url: /feed
+  script: feed.py
+- url: .*
+  script: main.py
+
+builtins:
+  - datastore_admin: on
