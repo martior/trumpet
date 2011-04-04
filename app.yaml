@@ -12,7 +12,7 @@ handlers:
   static_files: static/\1
   upload: static/(.*\.(gif|png|jpg|ico))
   login: admin
-- url: /feed
+- url: /feed/.*
   script: feed.py
 - url: .*
   script: main.py
