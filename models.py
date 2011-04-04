@@ -17,5 +17,5 @@ class AudioFile(db.Model):
 class Show(db.Model):
     host = db.StringProperty()
     fingerprint = db.StringProperty()
-    feeds = db.ListProperty(db.ReferenceProperty(Feed))
-    files = db.ListProperty(db.ReferenceProperty(AudioFile))
+    feeds = db.ListProperty(db.Key)
+    files = db.ListProperty(db.Key)
