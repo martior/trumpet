@@ -6,7 +6,7 @@ from google.appengine.ext import db
 from google.appengine.api import urlfetch
 from models import Feed, AudioFile
 
-
+import feedparser
 import logging
 import urllib
 import base64
@@ -66,6 +66,8 @@ class CallbackHandler(webapp.RequestHandler):
         self.response.out.write(challenge)
     def post(self):
         logging.debug('#saving feed data')
+        rss = feedparser.parse(self.request.body)
+        logging.debug(rss['entries'])
         self.response.out.write("")
 
 
