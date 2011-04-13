@@ -8,14 +8,19 @@ from google.appengine.ext import db
 
 class Feed(db.Model):
     url = db.StringProperty()
+    title = db.StringProperty()
     
 class AudioFile(db.Model):
     feed =  db.ReferenceProperty(Feed)
     title = db.StringProperty()
+    type = db.StringProperty()
     url = db.StringProperty()
+    published = db.DateTimeProperty()
+    processed = db.BooleanProperty()
 
-class Show(db.Model):
-    host = db.StringProperty()
-    fingerprint = db.StringProperty()
+class Station(db.Model):
+    short_name = db.StringProperty()
+    user = db.UserProperty()
+    title = db.StringProperty()
     feeds = db.ListProperty(db.Key)
     files = db.ListProperty(db.Key)

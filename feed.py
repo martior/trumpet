@@ -4,12 +4,13 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
 from google.appengine.api import urlfetch
-from models import Feed, AudioFile
+from models import Feed, AudioFile, Station
 
 import feedparser
 import logging
 import urllib
 import base64
+import datetime
 
 import settings
 
@@ -29,22 +30,25 @@ def superfeed_pubsubhubbub(post_data):
 
 class SubscribeHandler(webapp.RequestHandler):
     def post(self):
+        logging.debug('subscribing to new feed')
         topic = self.request.get('topic')
         query = db.Query(Feed)
         query.filter('url =', topic)
         results = query.fetch(limit=1)
         if len(results)>0:
-            form_fields = {
-                'hub.mode' : 'subscribe',
-                'hub.callback' : settings.SUPERFEEDR_CALLBACK,
-                'hub.topic' : self.request.get('topic'),
-                'hub.verify' : 'sync',
-                'hub.verify_token' : '',
-            }
-            superfeed_pubsubhubbub(form_fields)
+            logging.debug('feed allready saved')
+        else:
             feed = Feed()
-            feed.url = self.request.get('topic')
+            feed.url = topic
             feed.put()
+        form_fields = {
+            'hub.mode' : 'subscribe',
+            'hub.callback' : settings.SUPERFEEDR_CALLBACK,
+            'hub.topic' : topic,
+            'hub.verify' : 'sync',
+            'hub.verify_token' : '',
+        }
+        superfeed_pubsubhubbub(form_fields)
         
 
 class UnsubscribeHandler(webapp.RequestHandler):
@@ -58,7 +62,6 @@ class UnsubscribeHandler(webapp.RequestHandler):
         }
         superfeed_pubsubhubbub(form_fields)
 
-
 class CallbackHandler(webapp.RequestHandler):
     def get(self):
         logging.debug('#authenticating feed')
@@ -66,15 +69,69 @@ class CallbackHandler(webapp.RequestHandler):
         self.response.out.write(challenge)
     def post(self):
         logging.debug('#saving feed data')
-        rss = feedparser.parse(self.request.body)
-        logging.debug(rss['entries'])
-        self.response.out.write("")
+        body = self.request.get('body',self.request.body)
+        rss = feedparser.parse(body)
+        if "X-Pubsubhubbub-Topic" in self.request.headers.keys():
+            feedurl = self.request.headers["X-Pubsubhubbub-Topic"]
+        else:
+            feedurl = self.request.get('topic')
+        logging.debug(feedurl)
+        logging.debug(rss.entries)
+        query = db.Query(Feed)
+        query.filter('url =', feedurl)
+        results = query.fetch(limit=1)
+        if len(results)>0:
+            for entry in rss.entries:
+                logging.debug('#saving entry')
+                logging.debug(entry)
+                for enclosure in entry.enclosures:
+                    logging.debug(enclosure)
+                    if enclosure.type == "audio/mpeg":
+                        audiofile = AudioFile()
+                        audiofile.feed = results[0]
+                        audiofile.title = entry.title
+                        audiofile.url = enclosure.url
+                        audiofile.published = datetime.datetime(*(entry.updated_parsed[0:6]))
+                        audiofile.processed = False
+                        audiofile.put()
+                    
+            self.response.out.write("")
+        else:
+            logging.debug("Feed not found %s"%feedurl)
 
+class ProcessFilesHandler(webapp.RequestHandler):
+    def get(self):
+        fetch = 10
+        need_more_processing=False
+        query = db.Query(AudioFile)
+        query.filter('processed =', False)
+        if query.count(limit=fetch+1) > fetch:
+            need_more_processing=True
+        results = query.fetch(limit=fetch)
+        for result in results:
+            query = db.Query(Station)
+            query.filter('feeds =', result.feed)
+            stations = query.fetch(limit=100)
+            for station in stations:
+                if result.key() not in station.files:
+                    logging.debug("Adding file to this station")                    
+                    station.files.append(result.key())
+                else:
+                    logging.debug("File allready saved for this station")                    
+                station.put()
+            result.processed=True
+            result.put()
+        if need_more_processing:
+            #add que here
+            pass
 
 def main():
     application = webapp.WSGIApplication([('/feed/callback', CallbackHandler),
                                           ('/feed/subscribe', SubscribeHandler),
+                                          ('/feed/processfiles', ProcessFilesHandler),
                                           ('/feed/unsubscribe', UnsubscribeHandler),],
                                          debug=True)
     util.run_wsgi_app(application)
 
+if __name__ == '__main__':
+    main()
