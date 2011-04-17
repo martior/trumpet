@@ -86,17 +86,45 @@ a:hover { color: #036; }
     \\ ========================================== //
 */
 
-
-
-
-
-
-
-
-
-
-
-
+.scrubber {
+  top: -1px;
+  /* don't want the complete scrubber to receive events */
+  pointer-events: none;
+}
+ 
+.scrubber .thumb {
+  width: 20px;
+  height: 20px;
+  background-color: #D9CBE3;
+  -webkit-box-shadow: 0px 2px 4px rgba(0,0,0,0.8);
+  /* only the scrubber thumb should receive events */
+  pointer-events: auto;
+}
+ 
+.scrubber .thumb:hover {
+  background-color: #EAEAEA;
+}
+ 
+/* ==================== Time Displays ==================== */
+ 
+/* shared class for all time displays */
+.time {
+  color: rgb(150,150,150);
+  font-size: 14px;
+}
+ 
+/* matches the elapsed time display above the scrubber */
+.scrubber .time {
+  text-align: center;
+  -webkit-transform: translate(-15px, 21px);
+}
+ 
+/* matches the duration display below the progress bar */
+.duration {
+  top: -18px;
+  right: 0;
+  text-align: right;
+}
 
 
 

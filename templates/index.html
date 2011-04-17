@@ -12,8 +12,9 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 	
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 	<link rel="shortcut icon" href="/favicon.ico">
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 	<link rel="stylesheet" href="css/style.css?v=2">
@@ -26,10 +27,17 @@
 <h1>Tunr</h1>
 		</header>
 
-		<div id="main" role="main">
 
-            <a id ="play" href="#play">Play</a> <a id ="pause" href="#pause">Pause</a> <span id="current"></span>
-            <dl id="stations">
+
+		<div id="main" role="main">
+            <input type="button" value="Play" id="playpause" onclick="playOrPause()"> 
+            <input type="button" value="Next" id="next" onclick="playNext()">
+            <span id="current"></span>
+            <span id="time"></span>
+            <select id="stations">
+            </select>
+            
+            <dl id="playlist">
             </dl>
 		</div>
 

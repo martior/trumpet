@@ -19,9 +19,13 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
 import os
+import logging
 from google.appengine.ext.webapp import template
 from src.models import AudioFile, Station
 from django.utils import simplejson
+
+from datetime import datetime, timedelta,date
+
 
 class MainHandler(webapp.RequestHandler):
     def render(self, template_file, template_values = {}):
@@ -37,13 +41,21 @@ class FileJson(webapp.RequestHandler):
         playlist=[]
         stationid=self.request.get("stationid",None)
         query = db.Query(AudioFile)
+        day=self.request.get("day",date.today())
+        day = datetime(day.year, day.month, day.day)
+        created_start = day-timedelta(days=7)
+        created_end = day + timedelta(days=1)
+        query.filter('published >=', created_start)
+        query.filter('published <', created_end)
+        logging.info(created_start)
+        logging.info(created_end)
         if stationid is not None:
             station = Station.get_by_id(long(stationid))
             query.filter("feed IN",station.feeds)
         query.order('-published')
-        files = query.fetch(limit=25)
+        files = query.fetch(limit=50)
         for item in files:
-            playlist.append({"name":str(item.title),"mp3":str(item.url),"date":str(item.published)})
+            playlist.append({"name":str(item.title),"mp3":str(item.url),"date":item.published.strftime("%b %d %Y")})
         self.response.out.write(simplejson.dumps(playlist))
 
 
@@ -76,7 +88,7 @@ class StationHandler(webapp.RequestHandler):
 class StationJson(webapp.RequestHandler):
     def get(self):
         shows={}
-        for show in Station.all().fetch(limit=25):
+        for show in Station.all().order("-title").fetch(limit=25):
             shows[str(show.key().id())]=str(show.title)
         self.response.out.write(simplejson.dumps(shows))
 

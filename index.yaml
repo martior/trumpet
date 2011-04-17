@@ -13,6 +13,13 @@ indexes:
 - kind: AudioFile
   properties:
   - name: feed
+  - name: feed
+  - name: published
+    direction: desc
+
+- kind: AudioFile
+  properties:
+  - name: feed
   - name: published
     direction: desc
 

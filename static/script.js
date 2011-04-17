@@ -1,4 +1,3 @@
-var playlists = {"keys":new Array};
 var current_playlist_item = null
 
 getAudio = function(playlist_item) {
@@ -11,6 +10,7 @@ getAudio = function(playlist_item) {
 
 pause = function() {
 current = getAudio(current_playlist_item);
+$("#playpause").val('Play');
 if (current !=null){
     current.pause();
 }
@@ -18,23 +18,42 @@ return false;
 }
 
 play = function() {
+updateTime();
 current = getAudio(current_playlist_item);
+$("#playpause").val('Pause');
 if (current !=null){
-    current.load();
     current.play();
-    current.addEventListener('end',playNext,false);
-    loadNext();
 }
 return false;
 }
 
 
-loadNext = function() {
-    audio=getAudio(current_playlist_item.next());
-    if(audio != null){
-        audio.load();
-    }
-    
+playOrPause = function() {
+    current = getAudio(current_playlist_item);
+    $("#playpause").val( current.paused ?  'Pause':'Play');
+    if (current.paused) {
+        current.play();
+    } else {
+        current.pause();
+  }
+  return false;
+}
+
+
+prettyPrintNumber = function (number) {
+  return ((number < 10) ? '0' : '') + number;
+};
+prettyPrintTime = function (time) {
+  var components = [];
+  components[0] = prettyPrintNumber(Math.floor(time / 3600));
+  components[1] = prettyPrintNumber(Math.floor((time % 3600) / 60));
+  components[2] = prettyPrintNumber(Math.floor(time % 60));
+  return components.join(':');
+};
+
+updateTime = function(){
+    current = getAudio(current_playlist_item);
+    $("#time").html(prettyPrintTime(current.currentTime)+" of "+prettyPrintTime(current.duration));
 }
 
 
@@ -42,7 +61,7 @@ getPercentProg = function() {
   var audio = this;
   var endBuf = audio.buffered.end(0);
   var soFar = parseInt(((endBuf / audio.duration) * 100));
-  $(this).parent().find(".loadStatus").html(soFar + '%');
+  $(this).siblings(".loadStatus").html(soFar + '%');
   }
 
 playPlaylistItem = function(playlist_item) {
@@ -60,29 +79,41 @@ playPlaylistItem = function(playlist_item) {
 };
 
 playNext = function() {
-    playPlaylistItem(current_playlist_item.next());
+    playPlaylistItem(current_playlist_item.next(".playlistItem"));
 }
 playThis = function() {
     playPlaylistItem($(this));
 }
-  
+
+switchStation = function(){
+    showPlaylist($("#stations").first().val());
+}
 
 showPlaylist = function(key){
-    HTMLmarkup="<dt id='station-"+key+"'>"+playlists[key].title+"</dt><dd id='station-playlist-"+key+"'><ul>"
-    data = playlists[key].playlist
-    for (i =0;i<data.length;i++){
-       HTMLmarkup += '<li class="playlistItem"><span>'+data[i].name+'</span> <span class="loadStatus">0%</span> '+data[i].date+'<audio preload="none" src="'+data[i].mp3+'"></audio></li>';
-    };
-     HTMLmarkup += "</ul</dd>"
-    $('#stations').append(HTMLmarkup);
-    playlist_item=$('#station-playlist-'+key).find('.playlistItem')
-    playlist_item.click(playThis);
-    $.each(playlist_item.find("audio").get(), function(key, value) { 
-        value.addEventListener('progress',getPercentProg,false);
+    $.getJSON('/json/files?stationid='+key,
+    function(data) {
+        $('#playlist').empty()
+        HTMLmarkup=""
+        var date=new Date();
+        for (i =0;i<data.length;i++){
+            current_date = new Date(data[i].date);
+            if (date.getTime() != current_date.getTime()){
+                date=current_date;
+                HTMLmarkup += '<div class="dateSeparator">'+date+'</div>';                
+            }
+            HTMLmarkup += '<div class="playlistItem"><span>'+data[i].name+'</span> <span class="loadStatus">0%</span> '+data[i].date+'<audio preload="auto" src="'+data[i].mp3+'"></audio></div>';
+        };
+         HTMLmarkup += ""
+        $('#playlist').append(HTMLmarkup);
+        playlist_item=$('.playlistItem')
+        playlist_item.click(playThis);
+        playlist_item.find("audio").bind('progress',getPercentProg,false);
+        playlist_item.find("audio").bind('end',playNext,false);
+        playlist_item.find("audio").bind('timeupdate',updateTime,false);
+        if (current_playlist_item==null){
+            playPlaylistItem($(".playlistItem").first());
+        }
     });
-    if (current_playlist_item==null){
-        playPlaylistItem($(".playlistItem").first());
-    }
 };
 
 
@@ -92,15 +123,11 @@ function() {
     $("#play").click(play);
     $("#pause").click(pause);
     $.getJSON('/json/stations',function(data) {
-        $('#stations').empty()
         $.each(data,function(key, val) {
-            $.getJSON('/json/files?stationid='+key,
-            function(data) {
-                playlists[key]={'title':val,'playlist':data};
-                playlists.keys.push(key);
-                showPlaylist(key)
-            });
+                    $('#stations').append("<option class='station' value='"+key+"'>"+val+"</option>");
         });
+    $("#stations").click(switchStation);
+    switchStation();
 
     });
 
