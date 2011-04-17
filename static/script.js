@@ -22,7 +22,7 @@ current = getAudio(current_playlist_item);
 if (current !=null){
     current.load();
     current.play();
-    urrent.addEventListener('end',playNext,false);
+    current.addEventListener('end',playNext,false);
     loadNext();
 }
 return false;
