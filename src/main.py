@@ -20,12 +20,12 @@ from google.appengine.ext.webapp import util
 from google.appengine.ext import db
 import os
 from google.appengine.ext.webapp import template
-from models import AudioFile, Station
+from src.models import AudioFile, Station
 from django.utils import simplejson
 
 class MainHandler(webapp.RequestHandler):
     def render(self, template_file, template_values = {}):
-       path = os.path.join(os.path.dirname(__file__), 'templates', template_file)
+       path = os.path.join(os.path.dirname(__file__)[:-4], 'templates', template_file)
        self.response.out.write(template.render(path, template_values))
 
     def get(self):
@@ -36,17 +36,14 @@ class FileJson(webapp.RequestHandler):
     def get(self):
         playlist=[]
         stationid=self.request.get("stationid",None)
-        if stationid is None:
-            query = db.Query(AudioFile)
-            query.order('-published')
-            files = query.fetch(limit=25)
-            for item in files:
-                playlist.append({"name":str(item.title),"mp3":str(item.url)})
-        else:
+        query = db.Query(AudioFile)
+        if stationid is not None:
             station = Station.get_by_id(long(stationid))
-            for item in station.files:
-                item = db.get(item)
-                playlist.append({"name":str(item.title),"mp3":str(item.url)})
+            query.filter("feed IN",station.feeds)
+        query.order('-published')
+        files = query.fetch(limit=25)
+        for item in files:
+            playlist.append({"name":str(item.title),"mp3":str(item.url),"date":str(item.published)})
         self.response.out.write(simplejson.dumps(playlist))
 
 

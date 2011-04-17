@@ -1,4 +1,4 @@
-from models import Feed, Station
+from src.models import Feed, Station
 
 def main():
 

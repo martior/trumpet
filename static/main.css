@@ -1,29 +1,8 @@
 h1{
-    display: block;
-	float: left;
     margin-left:.5em;
     font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif; font-size: 2em; 
     color: #cccccc;
     }
-#personal-bar{
-    float:right;
-}
-ul#personal-bar {margin: 0; padding: 0em;}
-ul#personal-bar li {margin: 5px; position: relative; padding: 4px 8px; cursor: pointer; float: left;  list-style: none;}
-    
 body{
     background: #eeeeee;
 }
-div.jp-interface {
-	border:none;
-	position: relative;
-	left:200px;
-}
-
-div.jp-playlist{
-	position: relative;
-	left:200px;
-	border:none;
-    background:#eeeeee;
-    }
-

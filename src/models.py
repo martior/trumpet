@@ -16,11 +16,15 @@ class AudioFile(db.Model):
     type = db.StringProperty()
     url = db.StringProperty()
     published = db.DateTimeProperty()
-    processed = db.BooleanProperty()
 
 class Station(db.Model):
     short_name = db.StringProperty()
-    user = db.UserProperty()
     title = db.StringProperty()
     feeds = db.ListProperty(db.Key)
-    files = db.ListProperty(db.Key)
+    processed = db.BooleanProperty()
+    
+class User(db.Model):
+    user = db.UserProperty()
+    short_name = db.StringProperty()
+    title = db.StringProperty()
+    feeds = db.ListProperty(db.Key)

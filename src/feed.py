@@ -4,7 +4,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
 from google.appengine.api import urlfetch
-from models import Feed, AudioFile, Station
+from models import Feed, AudioFile
 
 import feedparser
 import logging
@@ -12,7 +12,7 @@ import urllib
 import base64
 import datetime
 
-import settings
+from src import settings
 
 def superfeed_pubsubhubbub(post_data):
     base64string = base64.encodestring('%s:%s' % (settings.SUPERFEEDR_USERNAME, settings.SUPERFEEDR_PASSWORD))[:-1]
@@ -92,43 +92,16 @@ class CallbackHandler(webapp.RequestHandler):
                         audiofile.title = entry.title
                         audiofile.url = enclosure.url
                         audiofile.published = datetime.datetime(*(entry.updated_parsed[0:6]))
-                        audiofile.processed = False
                         audiofile.put()
                     
             self.response.out.write("")
         else:
             logging.debug("Feed not found %s"%feedurl)
 
-class ProcessFilesHandler(webapp.RequestHandler):
-    def get(self):
-        fetch = 10
-        need_more_processing=False
-        query = db.Query(AudioFile)
-        query.filter('processed =', False)
-        if query.count(limit=fetch+1) > fetch:
-            need_more_processing=True
-        results = query.fetch(limit=fetch)
-        for result in results:
-            query = db.Query(Station)
-            query.filter('feeds =', result.feed)
-            stations = query.fetch(limit=100)
-            for station in stations:
-                if result.key() not in station.files:
-                    logging.debug("Adding file to this station")                    
-                    station.files.append(result.key())
-                else:
-                    logging.debug("File allready saved for this station")                    
-                station.put()
-            result.processed=True
-            result.put()
-        if need_more_processing:
-            #add que here
-            pass
 
 def main():
     application = webapp.WSGIApplication([('/feed/callback', CallbackHandler),
                                           ('/feed/subscribe', SubscribeHandler),
-                                          ('/feed/processfiles', ProcessFilesHandler),
                                           ('/feed/unsubscribe', UnsubscribeHandler),],
                                          debug=True)
     util.run_wsgi_app(application)
