@@ -68,14 +68,11 @@ class StationHandler(webapp.RequestHandler):
             self.redirect('/')
         station = Station.get_by_id(long(station))
         playlist=[]
-        for item in station.files:
-            item = db.get(item)
-            playlist.append({"name":str(item.title),"mp3":str(item.url)})
         feeds ={}
         for feed in station.feeds:
             feed = db.get(feed)
             feeds[str(feed.key())]=str(feed.title)
-        self.render("station.html",template_values={"files":playlist.__repr__(),"feeds":feeds.__repr__(),"stationname":station.title,"stationid":station.key().id()})
+        self.render("station.html",template_values={"files":{},"feeds":feeds.__repr__(),"stationname":station.title,"stationid":station.key().id()})
     def post(self,station):
         station = Station.get_by_id(long(station))
         feed = self.request.get("feed",None)
