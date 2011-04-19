@@ -32,11 +32,12 @@
 		<div id="main" role="main">
             <input type="button" value="Play" id="playpause" onclick="playOrPause()"> 
             <input type="button" value="Next" id="next" onclick="playNext()">
-            <span id="current"></span>
-            <span id="time"></span>
+            <span id="time">&nbsp;</span>
+            <div id="current">&nbsp;</div>
             <select id="stations">
             </select>
-            
+            <input type="button" value="Previous Day" id="previousDay" onclick="previousDay()">
+            <input type="button" value="Next Day" id="nextDay" onclick="nextDay()">
             <dl id="playlist">
             </dl>
 		</div>

@@ -1,4 +1,5 @@
-var current_playlist_item = null
+var current_playlist_item = null;
+var current_date=null;
 
 getAudio = function(playlist_item) {
     if (playlist_item==null){
@@ -94,17 +95,23 @@ showPlaylist = function(key){
     function(data) {
         $('#playlist').empty()
         HTMLmarkup=""
-        var date=new Date();
+        var date=null;
         for (i =0;i<data.length;i++){
             current_date = new Date(data[i].date);
-            if (date.getTime() != current_date.getTime()){
+            if (date==null){
                 date=current_date;
-                HTMLmarkup += '<div class="dateSeparator">'+date+'</div>';                
+                HTMLmarkup += '<div style="display:none;" class="dateSeparator"><span>'+data[i].date+'</span>';                                
             }
-            HTMLmarkup += '<div class="playlistItem"><span>'+data[i].name+'</span> <span class="loadStatus">0%</span> '+data[i].date+'<audio preload="auto" src="'+data[i].mp3+'"></audio></div>';
+            else if (date.getTime() != current_date.getTime()){
+                date=current_date;
+                HTMLmarkup += '</div><div style="display:none;" class="dateSeparator"><span>'+data[i].date+'</span>';                
+            }
+            HTMLmarkup += '<div class="playlistItem"><span>'+data[i].name+'</span> <span class="loadStatus">0%</span><audio preload="none" src="'+data[i].mp3+'"></audio></div>';
         };
-         HTMLmarkup += ""
+         HTMLmarkup += "</div>"
         $('#playlist').append(HTMLmarkup);
+        current_date = $(".dateSeparator").first();
+        current_date.css("display","block");
         playlist_item=$('.playlistItem')
         playlist_item.click(playThis);
         playlist_item.find("audio").bind('progress',getPercentProg,false);
@@ -116,6 +123,24 @@ showPlaylist = function(key){
     });
 };
 
+
+
+changeDay = function(newDay) {
+    if (newDay.length>0){
+        current_date = newDay;
+        $(".dateSeparator").css("display","none");
+        current_date.css("display","block");
+    }
+    
+}
+
+previousDay = function() {
+    changeDay(current_date.prev());
+    };
+
+nextDay = function() {
+    changeDay(current_date.next());
+    };
 
 
 $(document).ready(
