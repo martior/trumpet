@@ -4,9 +4,9 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
 from google.appengine.api import urlfetch
-from models import Feed, AudioFile
+from src.models import Feed, AudioFile
+from src import feedparser
 
-import feedparser
 import logging
 import urllib
 import base64
