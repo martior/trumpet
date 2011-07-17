@@ -55,7 +55,7 @@ class FileJson(webapp.RequestHandler):
         query.order('-published')
         files = query.fetch(limit=50)
         for item in files:
-            playlist.append({"name":str(item.title),"mp3":str(item.url),"date":item.published.strftime("%b %d %Y")})
+            playlist.append({u"name":unicode(item.title),u"mp3":unicode(item.url),u"date":item.published.strftime("%b %d %Y")})
         self.response.out.write(simplejson.dumps(playlist))
 
 

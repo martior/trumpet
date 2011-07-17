@@ -135,11 +135,11 @@ changeDay = function(newDay) {
 }
 
 previousDay = function() {
-    changeDay(current_date.prev());
+    changeDay(current_date.next());
     };
 
 nextDay = function() {
-    changeDay(current_date.next());
+    changeDay(current_date.prev());
     };
 
 
