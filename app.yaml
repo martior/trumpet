@@ -18,7 +18,7 @@ handlers:
   static_dir: static
 - url: /css
   static_dir: static
-- url: /(.*\.(gif|png|jpg|ico|css|js))
+- url: /(.*\.(gif|png|jpg|ico|css|js|html))
   static_files: static/\1
   upload: static/(.*\.(gif|png|jpg|ico))
 - url: /oneoff
