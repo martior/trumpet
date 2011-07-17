@@ -25,8 +25,12 @@ handlers:
   script: src/oneoff.py
 - url: /feed/.*
   script: src/feed.py
+- url: /remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  login: admin
 - url: .*
   script: src/main.py
-
+  
 builtins:
   - datastore_admin: on
+  - remote_api: on
