@@ -44,7 +44,10 @@ function getTimeFromCookie(audio) {
     t = readCookie("currentTime" + id);
     if (id != null && t != null) {
         playFromCurrentTime(audio);
-    };
+    }
+    else{
+        play();
+    }
 
 }
 
