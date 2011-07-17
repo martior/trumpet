@@ -1,5 +1,5 @@
 application: skabb-radio
-version: 2
+version: 3
 runtime: python
 api_version: 1
 
@@ -7,6 +7,12 @@ api_version: 1
 
 handlers:
 - url: /static
+  static_dir: static
+- url: /javascripts
+  static_dir: static
+- url: /images
+  static_dir: static
+- url: /stylesheets
   static_dir: static
 - url: /js
   static_dir: static
