@@ -55,7 +55,7 @@ class FileJson(webapp.RequestHandler):
         query.order('-published')
         files = query.fetch(limit=50)
         for item in files:
-            playlist.append({u"name":unicode(item.title),u"mp3":unicode(item.url),u"date":item.published.strftime("%b %d %Y")})
+            playlist.append({u"name":unicode(item.title),u"mp3":unicode(item.url),u"date":item.published.strftime("%b %d %Y"),"id":item.key().id()})
         self.response.out.write(simplejson.dumps(playlist))
 
 
@@ -67,7 +67,6 @@ class StationHandler(webapp.RequestHandler):
         if station == "":
             self.redirect('/')
         station = Station.get_by_id(long(station))
-        playlist=[]
         feeds ={}
         for feed in station.feeds:
             feed = db.get(feed)
