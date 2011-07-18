@@ -51,15 +51,6 @@ function getTimeFromCookie(audio) {
 
 }
 
-function setCurrentCookie(playlist) {
-    createCookie("current_audio_id", playlist.data('id'))
-    createCookie("current_audio_src", playlist.data('src'))
-    createCookie("current_audio_title", playlist.html())
-
-}
-
-
-
 pause = function() {
     audio = getAudio();
     $("#playpause").val('Play');
@@ -107,8 +98,8 @@ updateTime = function() {
     $("#time").html(prettyPrintTime(audio.currentTime) + " of " + prettyPrintTime(audio.duration));
     createCookie("currentTime" + $(audio).data('id'), Math.floor(audio.currentTime));
     if (sliding == false) {
-        $("#scrubber").slider("option", "max", Math.floor(audio.duration));
-        $("#scrubber").slider("option", "value", Math.floor(audio.currentTime));
+        $("#scrubber").attr("max", Math.floor(audio.duration));
+        $("#scrubber").attr("value", Math.floor(audio.currentTime));
     }
 }
 
@@ -126,16 +117,16 @@ playPlaylistItem = function(playlist_item) {
     }
     if (current_playlist_item != null) {
         pause();
-        current_playlist_item.css("background-color", "white");
+        current_playlist_item.removeClass("currentPlaylistItem");
     }
     current_playlist_item = playlist_item;
-    setCurrentCookie(current_playlist_item);
-    current_playlist_item.css("background-color", "red");
+    createCookie("current_audio_id", current_playlist_item.attr('id'));
+    current_playlist_item.addClass("currentPlaylistItem");
     $("#current").html(current_playlist_item.html());
     audio = $("#main_audio")
-    audio.data("id", current_playlist_item.data('id'));
+    audio.data("id", current_playlist_item.attr('id'));
     audio.attr("src", current_playlist_item.data('src'));
-    $("#scrubber").slider("option", "disabled", false);
+    $("#scrubber").removeAttr("disabled");
     getTimeFromCookie(audio)
 
 
@@ -143,6 +134,7 @@ playPlaylistItem = function(playlist_item) {
 
 playNext = function() {
     playPlaylistItem(current_playlist_item.next(".playlistItem"));
+    current_playlist_item.next(".playlistItem")
 }
 playThis = function(event) {
     playPlaylistItem($(this));
@@ -162,46 +154,22 @@ showPlaylist = function(key) {
         var date = null;
         for (i = 0; i < data.length; i++) {
             current_date = new Date(data[i].date);
-            if (date == null) {
+            if (date == null ||  (date.getTime() != current_date.getTime())) {
                 date = current_date;
-                HTMLmarkup += '<div style="display:none;" class="dateSeparator"><span>' + data[i].date + '</span><ul>';
+                HTMLmarkup += '<dt class="dateSeparator">' + data[i].date + '</dt>';
             }
-            else if (date.getTime() != current_date.getTime()) {
-                date = current_date;
-                HTMLmarkup += '</div><div style="display:none;" class="dateSeparator"><span>' + data[i].date + '</span><ul>';
-            }
-            HTMLmarkup += '<li data-src="' + data[i].mp3 + '" data-id="' + data[i].id + '" class="playlistItem"><span>' + data[i].name + '</li>';
+            HTMLmarkup += '<dd data-src="' + data[i].mp3 + '" id="' + data[i].id + '" class="playlistItem" >' + data[i].name + '</dd>';
         };
-        HTMLmarkup += "</ul></div>"
         $('#playlist').append(HTMLmarkup);
-        current_date = $(".dateSeparator").first();
-        current_date.css("display", "block");
         playlist_item = $('.playlistItem')
         playlist_item.click(playThis);
-        //if (current_playlist_item==null){
-        //    playPlaylistItem($(".playlistItem").first());
-        //}
+        playPlaylistItem( $("#"+readCookie("current_audio_id")));
+        if (current_playlist_item==null){
+            playPlaylistItem($(".playlistItem").first());
+        }
     });
 };
 
-
-
-changeDay = function(newDay) {
-    if (newDay.length > 0) {
-        current_date = newDay;
-        $(".dateSeparator").css("display", "none");
-        current_date.css("display", "block");
-    }
-
-}
-
-previousDay = function() {
-    changeDay(current_date.next());
-};
-
-nextDay = function() {
-    changeDay(current_date.prev());
-};
 
 
 $(document).ready(
@@ -209,6 +177,8 @@ function() {
 
     $("#play").click(play);
     $("#pause").click(pause);
+
+    
     $.getJSON('/json/stations',
     function(data) {
         $.each(data,
@@ -219,32 +189,21 @@ function() {
         switchStation();
 
     });
-
-    $("#scrubber").slider({
-        disabled: true,
-        slide: function(event, ui) {
-            sliding = true;
-        },
-        stop: function(event, ui) {
-            getAudio().currentTime = ui.value;
-            sliding = false;
-        }
-    });
-
-    audio = $("#main_audio")
+    audio = $("#main_audio");
     audio.bind('end', playNext, false);
     audio.bind('timeupdate', updateTime, false);
-    audio_src = readCookie("current_audio_src");
-    if (audio_src != null) {
-        audio.attr("src", audio_src);
-        $("#current").html(readCookie("current_audio_title"));
-        $("#scrubber").slider("option", "disabled", false);
-        audio.data("id", readCookie("current_audio_id"))
-        getTimeFromCookie(audio);
-    }
+    $("#scrubber").select(function() {
+      alert("Handler for .keypress() called.");
+    });
+    
+    $( '#scrubber' ).click(function(){
+        audio = $("#main_audio");
+       audio.attr("currentTime",$("#scrubber").attr("value"));
+       sliding = false;       
+    });
 
-
-
-
+    $( '#scrubber' ).change(function(){
+       sliding = true;
+    });
 
 });
