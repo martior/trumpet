@@ -18,10 +18,11 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.ext import db
+from google.appengine.api import users
 import os
 import logging
 from google.appengine.ext.webapp import template
-from src.models import AudioFile, Station
+from src.models import AudioFile, Station, User
 from django.utils import simplejson
 
 from datetime import datetime, timedelta,date
@@ -47,9 +48,20 @@ class FileJson(webapp.RequestHandler):
         created_end = day + timedelta(days=1)
         query.filter('published >=', created_start)
         query.filter('published <', created_end)
-        logging.info(created_start)
-        logging.info(created_end)
-        if stationid is not None:
+        if stationid=="user":
+            user = users.get_current_user()
+            logging.info("ZZZZZ")
+            logging.info(user)
+            if user is not None:
+                logging.info(user)
+                uquery = db.Query(User)
+                uquery.filter('user =', user)
+                uo = uquery.get()
+                logging.info(uo)
+                if uo is not None:
+                    query.filter("feed IN",uo.feeds)
+                    logging.info(uo.feeds)
+        elif stationid is not None:
             station = Station.get_by_id(long(stationid))
             query.filter("feed IN",station.feeds)
         query.order('-published')
@@ -81,6 +93,28 @@ class StationHandler(webapp.RequestHandler):
 
 
 
+class UserJson(webapp.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        if user:
+            logging.info(user)
+            query = db.Query(User)
+            query.filter('user =', user)
+            uo = query.get()
+            if uo is None:
+                uo = User()
+                uo.user = user
+                uo.put()            
+            self.response.out.write(simplejson.dumps({"login":"true", "user":str(user),"title":uo.title}))
+        else:
+            self.response.out.write(simplejson.dumps({"login":"false"}))
+
+
+class Logout(webapp.RequestHandler):
+    def get(self):
+        self.redirect(users.create_logout_url("/"))
+
+
 class StationJson(webapp.RequestHandler):
     def get(self):
         shows={}
@@ -99,6 +133,8 @@ class StationJson(webapp.RequestHandler):
 def main():
     application = webapp.WSGIApplication([('/', MainHandler),
                                            ('/s/([^/]+)?', StationHandler), 
+                                          ('/logout', Logout),
+                                          ('/json/userinfo', UserJson),
                                           ('/json/stations', StationJson),
                                           ('/json/files', FileJson),],
                                          debug=True)

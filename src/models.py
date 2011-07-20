@@ -21,7 +21,6 @@ class Station(db.Model):
     short_name = db.StringProperty()
     title = db.StringProperty()
     feeds = db.ListProperty(db.Key)
-    processed = db.BooleanProperty()
     
 class User(db.Model):
     user = db.UserProperty()

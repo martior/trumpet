@@ -6,6 +6,10 @@ api_version: 1
 
 
 handlers:
+- url: /user
+  login: required
+  auth_fail_action: redirect
+  script: src/user.py
 - url: /static
   static_dir: static
 - url: /javascripts

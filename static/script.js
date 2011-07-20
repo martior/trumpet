@@ -149,7 +149,7 @@ switchStation = function() {
 showPlaylist = function(key) {
     $.getJSON('/json/files?stationid=' + key,
     function(data) {
-        $('#playlist').empty()
+
         HTMLmarkup = ""
         var date = null;
         for (i = 0; i < data.length; i++) {
@@ -160,7 +160,14 @@ showPlaylist = function(key) {
             }
             HTMLmarkup += '<dd data-src="' + data[i].mp3 + '" id="' + data[i].id + '" class="playlistItem" >' + data[i].name + '</dd>';
         };
-        $('#playlist').append(HTMLmarkup);
+        if (key=="user"){
+            $('#userplaylist').empty()
+            $('#userplaylist').append(HTMLmarkup);            
+        }
+        else{
+            $('#playlist').empty()
+            $('#playlist').append(HTMLmarkup);            
+        }
         playlist_item = $('.playlistItem')
         playlist_item.click(playThis);
         playPlaylistItem( $("#"+readCookie("current_audio_id")));
@@ -168,17 +175,56 @@ showPlaylist = function(key) {
             playPlaylistItem($(".playlistItem").first());
         }
     });
-};
+}
+
+userInfo = function() {
+    $.getJSON('/json/userinfo',
+
+    function(data) {
+        if (data["login"] == "true"){
+            $("#login").hide();
+            $("#logout").show();
+            $("#signup-sign").hide();
+            $("#userinfo").show();
+            $("#username").html(data["user"]);
+            showPlaylist("user");
+        }
+        else{
+            $("#login").show();
+            $("#logout").hide();
+            $("#signup-sign").show();
+            $("#userinfo").hide();
+            $("#username").empty();
+            $("#userplaylist").empty();
+        }
+    });
+}
+
+login = function() {
+    $('<iframe />', {
+        name: 'login',
+        id:   'loginframe',
+        src:  '/user'
+    }).appendTo('body');
+}
+
+logout = function() {
+    $.get("/logout",function() {
+        userInfo()
+      });
 
 
+}
+    
 
 $(document).ready(
 function() {
 
     $("#play").click(play);
     $("#pause").click(pause);
-
-    
+    $("#login").click(login);
+    $("#logout").click(logout);
+    userInfo();
     $.getJSON('/json/stations',
     function(data) {
         $.each(data,
@@ -192,12 +238,9 @@ function() {
     audio = $("#main_audio");
     audio.bind('end', playNext, false);
     audio.bind('timeupdate', updateTime, false);
-    $("#scrubber").select(function() {
-      alert("Handler for .keypress() called.");
-    });
     
     $( '#scrubber' ).click(function(){
-        audio = $("#main_audio");
+       audio = $("#main_audio");
        audio.attr("currentTime",$("#scrubber").attr("value"));
        sliding = false;       
     });
