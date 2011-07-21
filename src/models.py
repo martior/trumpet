@@ -3,12 +3,10 @@
 
 from google.appengine.ext import db
 
-# Create your models here.
-
-
 class Feed(db.Model):
     url = db.StringProperty()
     title = db.StringProperty()
+    link = db.StringProperty()
     
 class AudioFile(db.Model):
     feed =  db.ReferenceProperty(Feed)

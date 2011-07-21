@@ -81,6 +81,12 @@ class CallbackHandler(webapp.RequestHandler):
         query.filter('url =', feedurl)
         results = query.fetch(limit=1)
         if len(results)>0:
+            feed = results[0]
+            if "title" in rss["feed"].keys():
+                feed.title= rss["feed"]["title"]
+            if "link" in rss["feed"].keys():
+                feed.link= rss["feed"]["link"]
+            feed.put()
             for entry in rss.entries:
                 logging.debug('#saving entry')
                 logging.debug(entry)
