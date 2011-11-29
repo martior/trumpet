@@ -25,7 +25,8 @@
 	<link rel="stylesheet" href="stylesheets/skeleton.css">
 	<link rel="stylesheet" href="stylesheets/layout.css">
 	<link rel="stylesheet" href="stylesheets/app.css">
-	
+	<link id="agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRiV2gkM" rel="stylesheet" type="text/css" href="http://www.webputty.net/css/agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRiV2gkM" />
+    <script type="text/javascript" src="http://www.webputty.net/js/agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRiV2gkM"></script>
 	
 	<!-- Favicons
 	================================================== -->
@@ -36,7 +37,7 @@
 	
 </head>
 <body>
-
+        <input id="loggedinuser" type="hidden" value="{{user}}" />
     	<div class="container">
             <div class="sixteen columns">
                 <div class="two columns">
@@ -70,17 +71,38 @@
                         <ul>
                             <li>Save progress between browsers</li>
                             <li>Subscribe to custom feeds</li>
-                            <li>Organize stations</li>
                             <li>Free for the first 100 people who sign up</li>
                         </ul>
-                        <input type="button" value="Register" id="register"> 
+                        Login with your Google id to register
                         </div>
                     </div>
                     <div id="userinfo">
                         <h2>Your Station</h2>
-                        <a href="#">Add feed</a> <a href="#">Manage feeds</a>
-                        <dl id="userplaylist">
-                        </dl>
+
+
+                        <ul class="tabs">
+                          <!-- Give href an ID value of corresponding "tabs-content" <li>'s -->
+                          <li><a class="active" href="#userPlaylistContainer">Playlist</a></li>
+                          <li><a href="#userPlaylistEdit">Edit</a></li>
+                        </ul>
+
+                        <ul class="tabs-content">
+
+                          <li class="active" id="userPlaylistContainerTab">  <dl id="userplaylist"></dl></li>
+                          <li id="userPlaylistEditTab">
+                              <form id="feedform">
+                              <h3>You are currently subscribed to:</h3>
+                              <ul id="userfeeds"></ul>
+                              <div id="feedresult" />
+                              <h3>Subscribe to feed</h3>
+                              <small>Enter a feed URL to add to your personal radiostation:</small> <input type="text" name="feedurl" />
+                              <select name="feed" id="feeds">
+                              </select>                
+                              <input type="button" value="Subscribe" id="subscribe">    
+                              </form>                     
+
+                              </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -95,7 +117,7 @@
 		
 	<!-- JS
 	================================================== -->
-    <script src="http://code.jquery.com/jquery-1.5.1.min.js"></script>
+        <script src="http://code.jquery.com/jquery-1.5.1.min.js"></script>
 	<script>window.jQuery || document.write("<script src='javascripts/jquery-1.5.1.min.js'>\x3C/script>")</script>
 	<script src="javascripts/app.js"></script>
 	<script src="javascripts/script.js"></script>

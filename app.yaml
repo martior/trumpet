@@ -6,7 +6,7 @@ api_version: 1
 
 
 handlers:
-- url: /user
+- url: /user.* 
   login: required
   auth_fail_action: redirect
   script: src/user.py

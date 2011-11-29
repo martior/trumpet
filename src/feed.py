@@ -14,6 +14,9 @@ import datetime
 
 from src import settings
 
+
+    
+
 def superfeed_pubsubhubbub(post_data):
     base64string = base64.encodestring('%s:%s' % (settings.SUPERFEEDR_USERNAME, settings.SUPERFEEDR_PASSWORD))[:-1]
     form_data = urllib.urlencode(post_data)
@@ -28,27 +31,32 @@ def superfeed_pubsubhubbub(post_data):
     except:
         logging.debug("fail")
 
+
+def subscribe(topic):
+    logging.debug('subscribing to new feed')
+    query = db.Query(Feed)
+    query.filter('url =', topic)
+    results = query.fetch(limit=1)
+    if len(results)>0:
+        logging.debug('feed allready saved')
+        feed = results[0]
+    else:
+        feed = Feed()
+        feed.url = topic
+        feed.put()
+    form_fields = {
+        'hub.mode' : 'subscribe',
+        'hub.callback' : settings.SUPERFEEDR_CALLBACK,
+        'hub.topic' : topic,
+        'hub.verify' : 'sync',
+        'hub.verify_token' : '',
+    }
+    superfeed_pubsubhubbub(form_fields)
+    return feed
+
 class SubscribeHandler(webapp.RequestHandler):
     def post(self):
-        logging.debug('subscribing to new feed')
-        topic = self.request.get('topic')
-        query = db.Query(Feed)
-        query.filter('url =', topic)
-        results = query.fetch(limit=1)
-        if len(results)>0:
-            logging.debug('feed allready saved')
-        else:
-            feed = Feed()
-            feed.url = topic
-            feed.put()
-        form_fields = {
-            'hub.mode' : 'subscribe',
-            'hub.callback' : settings.SUPERFEEDR_CALLBACK,
-            'hub.topic' : topic,
-            'hub.verify' : 'sync',
-            'hub.verify_token' : '',
-        }
-        superfeed_pubsubhubbub(form_fields)
+        subscribe(self.request.get('topic'))
         
 
 class UnsubscribeHandler(webapp.RequestHandler):

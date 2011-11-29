@@ -1,6 +1,13 @@
 var current_playlist_item = null;
 var current_date = null;
 var sliding = false;
+var loggedin = false;
+var update_server=true;
+
+
+if ($("#loggedinuser").val()!=""){
+    loggedin = true;
+}
 
 getAudio = function() {
     return $("#main_audio").get(0);
@@ -23,7 +30,7 @@ function readCookie(name) {
 }
 
 
-function playFromCurrentTime(audio) {             
+function playFromCurrentTime(audio,t) {             
     setTimeout(function(){
         try
           {
@@ -32,7 +39,7 @@ function playFromCurrentTime(audio) {
           }
         catch(err)
           {
-             playFromCurrentTime(audio);
+             playFromCurrentTime(audio,t);
           }
         },500); 
     }
@@ -41,13 +48,32 @@ function getTimeFromCookie(audio) {
     audio.attr("preload","auto");
     audio.get(0).load()
     id = audio.data('id');
-    t = readCookie("currentTime" + id);
-    if (id != null && t != null) {
-        playFromCurrentTime(audio);
+    if (id == null){
+        play()
+        
+        }
+    else if (loggedin == true){
+        $.get('user/progress',{file:$(audio).data('id')}, function(t) {
+            if (t != "") {
+                playFromCurrentTime(audio,t);
+            }
+            else{
+                play()
+            }                   
+        });
     }
     else{
-        play();
+        t = readCookie("currentTime" + id);
+        if (t != null) {
+            playFromCurrentTime(audio,t);
+        }
+        else{
+            play()
+        }
+        
     }
+        
+    
 
 }
 
@@ -97,6 +123,17 @@ updateTime = function() {
     audio = getAudio();
     $("#time").html(prettyPrintTime(audio.currentTime) + " of " + prettyPrintTime(audio.duration));
     createCookie("currentTime" + $(audio).data('id'), Math.floor(audio.currentTime));
+    if (loggedin == true){
+        if (update_server==true){
+        update_server = false;
+        $.post('user/progress',{file:$(audio).data('id'),progress:Math.floor(audio.currentTime)});
+        window.setTimeout(function() {
+            update_server=true;
+        }, 10000);
+        }
+        
+
+    }
     if (sliding == false) {
         $("#scrubber").attr("max", Math.floor(audio.duration));
         $("#scrubber").attr("value", Math.floor(audio.currentTime));
@@ -121,14 +158,16 @@ playPlaylistItem = function(playlist_item) {
     }
     current_playlist_item = playlist_item;
     createCookie("current_audio_id", current_playlist_item.attr('id'));
+    if (loggedin == true){
+        $.post('user/progress',{file:current_playlist_item.attr('id')});
+    }
     current_playlist_item.addClass("currentPlaylistItem");
     $("#current").html(current_playlist_item.html());
     audio = $("#main_audio")
-    audio.data("id", current_playlist_item.attr('id'));
+    audio.data("id", current_playlist_item.data('id'));
     audio.attr("src", current_playlist_item.data('src'));
     $("#scrubber").removeAttr("disabled");
     getTimeFromCookie(audio)
-
 
 };
 
@@ -158,7 +197,7 @@ showPlaylist = function(key) {
                 date = current_date;
                 HTMLmarkup += '<dt class="dateSeparator">' + data[i].date + '</dt>';
             }
-            HTMLmarkup += '<dd data-src="' + data[i].mp3 + '" id="' + data[i].id + '" class="playlistItem" >' + data[i].name + '</dd>';
+            HTMLmarkup += '<dd data-src="' + data[i].mp3 + '"id="'+key+'-'+data[i].id+'" data-id="' + data[i].id + '" class="playlistItem" >' + data[i].name + '</dd>';
         };
         if (key=="user"){
             $('#userplaylist').empty()
@@ -168,9 +207,25 @@ showPlaylist = function(key) {
             $('#playlist').empty()
             $('#playlist').append(HTMLmarkup);            
         }
-        playlist_item = $('.playlistItem')
-        playlist_item.click(playThis);
-        playPlaylistItem( $("#"+readCookie("current_audio_id")));
+        $('.playlistItem').click(playThis);
+        if (loggedin == true && current_playlist_item==null){
+            $.get('user/progress',{file:$(audio).data('id')}, function(current_audio_id) {
+                playPlaylistItem( $("#"+current_audio_id));
+                if (current_playlist_item==null){
+                    playPlaylistItem($(".playlistItem").first());
+                }
+            });
+        }
+        else{
+            playPlaylistItem( $("#"+readCookie("current_audio_id")));
+            if (current_playlist_item==null){
+                playPlaylistItem($(".playlistItem").first());
+            }
+            
+        }
+        if (current_playlist_item==null){
+            playPlaylistItem( $("#"+readCookie("current_audio_id")));
+        }
         if (current_playlist_item==null){
             playPlaylistItem($(".playlistItem").first());
         }
@@ -182,14 +237,48 @@ userInfo = function() {
 
     function(data) {
         if (data["login"] == "true"){
+            loggedin = true;
+            if (loggedin == true && current_playlist_item != null){
+                $.post('user/progress',{file:current_playlist_item.attr('id')});
+            }
             $("#login").hide();
             $("#logout").show();
             $("#signup-sign").hide();
             $("#userinfo").show();
             $("#username").html(data["user"]);
             showPlaylist("user");
+            $.getJSON('/user/feeds',
+
+            function(data) {
+                $('#userfeeds').empty()
+                $.each(data,
+                function(key, val) {
+                    $('#userfeeds').append("<li id='feed-"+key+"'>" + val + "</li>");
+                });
+
+                $.getJSON('/json/feeds',
+                function(data) {
+                    $('#feeds').empty();
+                    $('#feeds').append("<option>or select one from this list</option>");
+                    $.each(data,
+                    function(key, val) {
+                        if ($("#feed-"+key).length<1){
+                            $('#feeds').append("<option value='" + key + "'>" + val + "</option>");
+                        }
+                    });
+                    if($('#feeds').children().length<2){
+                        $('#feeds').hide();
+                    }
+                    else{
+                        $('#feeds').show();
+                    }
+                });
+
+            });
+
         }
         else{
+            loggedin = false;
             $("#login").show();
             $("#logout").hide();
             $("#signup-sign").show();
@@ -199,6 +288,7 @@ userInfo = function() {
         }
     });
 }
+
 
 login = function() {
     $('<iframe />', {
@@ -216,14 +306,22 @@ logout = function() {
 
 }
     
+subscribe = function(){
+    
+    
+    $.post('user/feeds',$("#feedform").serialize(), function(data) {
+        $('#feedresult').html(data);
+    });
+    
+}
 
 $(document).ready(
 function() {
-
     $("#play").click(play);
     $("#pause").click(pause);
     $("#login").click(login);
     $("#logout").click(logout);
+    $("#subscribe").click(subscribe);
     userInfo();
     $.getJSON('/json/stations',
     function(data) {

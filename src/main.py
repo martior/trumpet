@@ -22,7 +22,7 @@ from google.appengine.api import users
 import os
 import logging
 from google.appengine.ext.webapp import template
-from src.models import AudioFile, Station, User
+from src.models import AudioFile, Station, User, Feed
 from django.utils import simplejson
 
 from datetime import datetime, timedelta,date
@@ -34,7 +34,10 @@ class MainHandler(webapp.RequestHandler):
        self.response.out.write(template.render(path, template_values))
 
     def get(self):
-        self.render("index.html")
+        user = users.get_current_user() 
+        if user is None:
+            user = ""
+        self.render("index.html",{"user": user})
 
 class FileJson(webapp.RequestHandler):
 
@@ -50,7 +53,6 @@ class FileJson(webapp.RequestHandler):
         query.filter('published <', created_end)
         if stationid=="user":
             user = users.get_current_user()
-            logging.info("ZZZZZ")
             logging.info(user)
             if user is not None:
                 logging.info(user)
@@ -115,6 +117,14 @@ class Logout(webapp.RequestHandler):
         self.redirect(users.create_logout_url("/"))
 
 
+class FeedJson(webapp.RequestHandler):
+    def get(self):
+        feeds={}
+        for feed in Feed.all().order("-title").fetch(limit=100):
+            feeds[str(feed.key().id())]=str(feed.title)
+        self.response.out.write(simplejson.dumps(feeds))
+
+
 class StationJson(webapp.RequestHandler):
     def get(self):
         shows={}
@@ -134,6 +144,7 @@ def main():
     application = webapp.WSGIApplication([('/', MainHandler),
                                            ('/s/([^/]+)?', StationHandler), 
                                           ('/logout', Logout),
+                                          ('/json/feeds', FeedJson),
                                           ('/json/userinfo', UserJson),
                                           ('/json/stations', StationJson),
                                           ('/json/files', FileJson),],

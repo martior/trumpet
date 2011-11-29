@@ -25,3 +25,9 @@ class User(db.Model):
     short_name = db.StringProperty()
     title = db.StringProperty()
     feeds = db.ListProperty(db.Key)
+    last_played = db.StringProperty()
+
+class AudioFileProgress(db.Model):
+    user = db.UserProperty()
+    audio_file = db.StringProperty()
+    progress = db.StringProperty()

@@ -21,7 +21,6 @@ $(document).ready(function() {
 			
 			//Get Location of tab's content
 			var contentLocation = $(this).attr('href') + "Tab";
-			
 			//Let go if not a hashed one
 			if(contentLocation.charAt(0)=="#") {
 			
