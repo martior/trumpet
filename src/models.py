@@ -7,6 +7,7 @@ class Feed(db.Model):
     url = db.StringProperty()
     title = db.StringProperty()
     link = db.StringProperty()
+    image = db.StringProperty()
     
 class AudioFile(db.Model):
     feed =  db.ReferenceProperty(Feed)
@@ -14,6 +15,7 @@ class AudioFile(db.Model):
     type = db.StringProperty()
     url = db.StringProperty()
     published = db.DateTimeProperty()
+    summary = db.TextProperty()
 
 class Station(db.Model):
     short_name = db.StringProperty()

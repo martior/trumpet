@@ -32,12 +32,11 @@ class MainHandler(webapp.RequestHandler):
     def render(self, template_file, template_values = {}):
        path = os.path.join(os.path.dirname(__file__)[:-4], 'templates', template_file)
        self.response.out.write(template.render(path, template_values))
-
     def get(self):
         user = users.get_current_user() 
         if user is None:
             user = ""
-        self.render("index.html",{"user": user})
+        self.render("index.html",{"user": user,"login_url":users.create_login_url("%s"%self.request.uri)})
 
 class FileJson(webapp.RequestHandler):
 
@@ -69,7 +68,7 @@ class FileJson(webapp.RequestHandler):
         query.order('-published')
         files = query.fetch(limit=50)
         for item in files:
-            playlist.append({u"name":unicode(item.title),u"mp3":unicode(item.url),u"date":item.published.strftime("%b %d %Y"),"id":item.key().id()})
+            playlist.append({u"name":unicode(item.title),u"mp3":unicode(item.url),u"date":item.published.strftime("%b %d %Y"),"id":item.key().id(),"summary":item.summary})
         self.response.out.write(simplejson.dumps(playlist))
 
 

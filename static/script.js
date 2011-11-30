@@ -1,9 +1,10 @@
 var current_playlist_item = null;
 var current_date = null;
 var sliding = false;
+var paused_before_sliding = true;
 var loggedin = false;
 var update_server=true;
-
+var summaries = {};
 
 if ($("#loggedinuser").val()!=""){
     loggedin = true;
@@ -168,6 +169,7 @@ playPlaylistItem = function(playlist_item) {
     audio.attr("src", current_playlist_item.data('src'));
     $("#scrubber").removeAttr("disabled");
     getTimeFromCookie(audio)
+    $("#summary").html(summaries[current_playlist_item.data('id')]);
 
 };
 
@@ -198,6 +200,7 @@ showPlaylist = function(key) {
                 HTMLmarkup += '<dt class="dateSeparator">' + data[i].date + '</dt>';
             }
             HTMLmarkup += '<dd data-src="' + data[i].mp3 + '"id="'+key+'-'+data[i].id+'" data-id="' + data[i].id + '" class="playlistItem" >' + data[i].name + '</dd>';
+            summaries[data[i].id]=data[i].summary;
         };
         if (key=="user"){
             $('#userplaylist').empty()
@@ -279,7 +282,7 @@ userInfo = function() {
         }
         else{
             loggedin = false;
-            $("#login").show();
+            //$("#login").show();
             $("#logout").hide();
             $("#signup-sign").show();
             $("#userinfo").hide();
@@ -291,11 +294,7 @@ userInfo = function() {
 
 
 login = function() {
-    $('<iframe />', {
-        name: 'login',
-        id:   'loginframe',
-        src:  '/user'
-    }).appendTo('body');
+    window.location.href = $("#login_url").val();
 }
 
 logout = function() {
@@ -337,14 +336,32 @@ function() {
     audio.bind('end', playNext, false);
     audio.bind('timeupdate', updateTime, false);
     
-    $( '#scrubber' ).click(function(){
+    $( '#scrubber' ).change(function(){
        audio = $("#main_audio");
        audio.attr("currentTime",$("#scrubber").attr("value"));
-       sliding = false;       
     });
 
-    $( '#scrubber' ).change(function(){
+    $( '#scrubber' ).mouseup(function(){
+       sliding = false;
+       if (!paused_before_sliding){
+           play();
+       }
+
+
+    });
+
+
+    $( '#scrubber' ).mousedown(function(){
        sliding = true;
+       if (!audio.paused){
+           paused_before_sliding = false;
+           pause();
+       }
+       else{
+           paused_before_sliding = true;
+       }
+       
+       
     });
 
 });

@@ -94,6 +94,9 @@ class CallbackHandler(webapp.RequestHandler):
                 feed.title= rss["feed"]["title"]
             if "link" in rss["feed"].keys():
                 feed.link= rss["feed"]["link"]
+            if "image" in rss["feed"].keys():
+                feed.image= rss["feed"]["image"]
+
             feed.put()
             for entry in rss.entries:
                 logging.debug('#saving entry')
@@ -104,6 +107,7 @@ class CallbackHandler(webapp.RequestHandler):
                         audiofile = AudioFile()
                         audiofile.feed = results[0]
                         audiofile.title = entry.title
+                        audiofile.summary = entry.summary
                         audiofile.url = enclosure.url
                         audiofile.published = datetime.datetime(*(entry.updated_parsed[0:6]))
                         audiofile.put()

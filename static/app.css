@@ -1,19 +1,44 @@
-#current { margin-top: 10px; font-size: 11px; line-height: 12px; color: #777; }
+#current { font-size: 11px; line-height: 12px; color: #777; }
 #time { font-size: 9px; line-height: 12px; color: #777; }
 iframe{position: fixed; top:0; right:0; background: white; border: solid 1px #ccc;}
 dt { font-size: 10px; line-height: 12px; color: #777; font-style: italic;}
 dd { font-size: 12px; line-height: 22px; color: #777; }
 .dateSeparator{margin-top: 15px;}
-.currentPlaylistItem{font-weight: bold;}
-footer{ font-size: 10px; line-height: 22px; color: #777; margin-top: 10px; border-top:1px solid #CCC;}
+.currentPlaylistItem{font-weight: bold; background-color: #CCC;}
 #playpause{width: 60px;}
 #userinfo h2,
-#station-container h2,
+#playlist h2,
 #signup-sign h2{font-size: 18px;}
 #signup-sign ul{padding-left: 20px;}
 #signup-sign li{list-style-type: square;}
 #logout{display:none; width: 60px;position:fixed; top:0; right:0;}
-#login{width: 60px;position:fixed; top:0; right:0;}
+#login{display:none; width: 60px;position:fixed; top:0; right:0;}
 #userinfo{display:none;}
 #feeds{display:none;}
 #userPlaylistEditTab h3{font-size: 15px;}
+
+#stations-container{width: 250px; position: absolute; left: 0px; top: 0px; padding: 10px; height: 60px; border-bottom: 1px solid #CCC;}
+#stations{margin-top: 37px; margin-left: 20px;}
+#playlist{width: 250px; position: absolute; left: 0px; top: 80px;}
+#playlist{border-right: 1px solid #CCC;}
+#playlist dd,
+#playlist dt{
+    padding-left: 30px;
+}
+#audio-player{ position: absolute; left:250px; top:0; padding: 10px; height: 60px;  border-bottom: 1px solid #CCC; width: 100%;}
+#summary{
+    font-size: 12px; 
+    color: #777;}
+
+footer{position: fixed; left: 0px; bottom: 0px; 
+    background-color: white; 
+    width: 100%; 
+    padding: 0px; 
+    text-align: center;
+    font-size: 10px; 
+    color: #777; 
+    margin: 0px;
+    padding: 0px;
+    border-top:1px solid #CCC;}
+footer h1{ font-size: 14px; display: inline; margin: 0; padding: 0px; line-height: 14px;}
+header{display: none;}
