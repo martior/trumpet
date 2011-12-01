@@ -171,7 +171,6 @@ playThis = function(event) {
 showPlaylist = function(key) {
     $.getJSON('/json/files?stationid=' + key,
     function(data) {
-
         HTMLmarkup = ""
         var date = null;
         for (i = 0; i < data.length; i++) {
@@ -202,7 +201,6 @@ $(document).ready(
 function() {
     $("#play").click(play);
     $("#pause").click(pause);
-    showPlaylist(2029);
     audio_tag = $("#main_audio");
     audio_tag.bind('end', playNext, false);
     audio_tag.bind('timeupdate', updateTime, false);
@@ -230,5 +228,6 @@ function() {
        
        
     });
+    showPlaylist();
 
 });

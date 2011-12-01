@@ -43,6 +43,8 @@ class FileJson(webapp.RequestHandler):
     def get(self):
         playlist=[]
         stationid=self.request.get("stationid",None)
+        if stationid=="undefined":
+            stationid = None
         query = db.Query(AudioFile)
         day=self.request.get("day",date.today())
         day = datetime(day.year, day.month, day.day)
