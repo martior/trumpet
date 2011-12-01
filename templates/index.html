@@ -18,7 +18,11 @@
 	<!-- Mobile Specific Metas
   ================================================== -->
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" /> 
-	
+	<meta name="apple-mobile-web-app-capable"
+          content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent" />
+    
 	<!-- CSS
   ================================================== -->
 	<link rel="stylesheet" href="stylesheets/base.css">
@@ -33,37 +37,19 @@
 	
 </head>
 <body>
-	<header>
-        <h1 id="logo">tunr</h1>
-        <input type="button" value="Login" id="login"> 
-        <input type="button" value="Logout" id="logout"> 
-        <input id="loggedinuser" type="hidden" value="{{user}}" />
-        <input id="login_url" type="hidden" value="{{login_url}}" />
-	</header>
 
-    <article>
-    <div id="stations-container">
-        <h1 id="logo">tunr</h1>
-        <select id="stations">
-        </select>                
-    </div>
-
-    <dl id="playlist">
-    </dl>
 
     <div id="audio-player" role="main">
         <div id="current">select show to begin playing</div><div id="time">00:00:00 of 00:00:00</div>
         <input type="button" value="Play" id="playpause" onclick="playOrPause()"> 
         <input id="scrubber" value="0" disabled="true" type="range" />            
 	    <audio id="main_audio" >Audio</audio>
-        <div id="summary"></div>
     </div>
-    </article>
 
+    <dl id="playlist">
+    </dl>
 
-
-
-
+    <div id="summary"></div>
 
 	<footer>
         <h1 id="logo">tunr</h1> © Martin Reistadbakk 2011 ✉ <a href="mailto:tunr@skabb.com">Email Me</a>
@@ -75,8 +61,7 @@
 	<!-- JS
 	================================================== -->
     <script src="http://code.jquery.com/jquery-1.5.1.min.js"></script>
-	<script>window.jQuery || document.write("<script src='javascripts/jquery-1.5.1.min.js'>\x3C/script>")</script>
-	<script src="javascripts/script.js"></script>
+    <script src="javascripts/script.js"></script>
 	
 
 	

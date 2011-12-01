@@ -1,6 +1,5 @@
 #current { font-size: 11px; line-height: 12px; color: #777; }
 #time { font-size: 9px; line-height: 12px; color: #777; }
-iframe{position: fixed; top:0; right:0; background: white; border: solid 1px #ccc;}
 dt { font-size: 10px; line-height: 12px; color: #777; font-style: italic;}
 dd { font-size: 12px; line-height: 22px; color: #777; }
 .dateSeparator{margin-top: 15px;}
@@ -17,18 +16,21 @@ dd { font-size: 12px; line-height: 22px; color: #777; }
 #feeds{display:none;}
 #userPlaylistEditTab h3{font-size: 15px;}
 
-#stations-container{width: 320px; position: absolute; left: 0px; top: 0px; padding: 10px; height: 60px; border-bottom: 1px solid #CCC;}
+#stations-container{display: none; width: 320px; position: absolute; left: 0px; top: 0px; padding: 10px; height: 60px; }
 #stations{margin-top: 15px; margin-left: 20px;}
 #playlist{width: 320px; position: absolute; left: 0px; top: 80px;}
-#playlist{border-right: 1px solid #CCC;}
 #playlist dd,
 #playlist dt{
     padding-left: 30px;
 }
-#audio-player{ position: absolute; left:320px; top:0; padding: 10px; height: 60px;  border-bottom: 1px solid #CCC; width: 100%;}
+#audio-player{ position: absolute; top:0; padding: 10px; height: 60px; padding-left: 30px;  }
 #summary{
     font-size: 12px; 
-    color: #777;}
+    color: #777;
+    width: 320px;
+    position: absolute; left: 320px; top: 0px;
+    padding: 1em;}
+    
 
 footer{position: fixed; left: 0px; bottom: 0px; 
     background-color: white; 
@@ -41,5 +43,4 @@ footer{position: fixed; left: 0px; bottom: 0px;
     padding: 0px;
     border-top:1px solid #CCC;}
 h1#logo{ font-size: 14px; display: inline; margin: 0; padding: 0px; line-height: 14px;}
-#stations-container h1#logo{margin-left: 20px; font-size: 18px; line-height: 18px;}
 header{display: none;}

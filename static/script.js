@@ -2,13 +2,9 @@ var current_playlist_item = null;
 var current_date = null;
 var sliding = false;
 var paused_before_sliding = true;
-var loggedin = false;
 var update_server=true;
 var summaries = {};
 
-if ($("#loggedinuser").val()!=""){
-    loggedin = true;
-}
 
 getAudio = function() {
     return $("#main_audio").get(0);
@@ -46,27 +42,17 @@ function playFromCurrentTime(audio,t) {
     }
     
 function getTimeFromCookie(audio) {
-    audio.attr("preload","auto");
-    audio.get(0).load()
-    id = audio.data('id');
+    audio_tag.attr("preload","auto");
+    audio_tag.get(0).load()
+    id = audio_tag.data('id');
     if (id == null){
         play()
         
-        }
-    else if (loggedin == true){
-        $.get('user/progress',{file:$(audio).data('id')}, function(t) {
-            if (t != "") {
-                playFromCurrentTime(audio,t);
-            }
-            else{
-                play()
-            }                   
-        });
     }
     else{
         t = readCookie("currentTime" + id);
         if (t != null) {
-            playFromCurrentTime(audio,t);
+            playFromCurrentTime(audio_tag,t);
         }
         else{
             play()
@@ -79,31 +65,31 @@ function getTimeFromCookie(audio) {
 }
 
 pause = function() {
-    audio = getAudio();
+    audio_tag = getAudio();
     $("#playpause").val('Play');
-    if (audio != null) {
-        audio.pause();
+    if (audio_tag != null) {
+        audio_tag.pause();
     }
     return false;
 }
 
 play = function() {
-    audio = getAudio();
+    audio_tag = getAudio();
     $("#playpause").val('Pause');
-    if (audio != null) {
-        audio.play();
+    if (audio_tag != null) {
+        audio_tag.play();
     }
     return false;
 }
 
 
 playOrPause = function() {
-    audio = getAudio();
-    $("#playpause").val(audio.paused ? 'Pause': 'Play');
-    if (audio.paused) {
-        audio.play();
+    audio_tag = getAudio();
+    $("#playpause").val(audio_tag.paused ? 'Pause': 'Play');
+    if (audio_tag.paused) {
+        audio_tag.play();
     } else {
-        audio.pause();
+        audio_tag.pause();
     }
     return false;
 }
@@ -121,31 +107,20 @@ prettyPrintTime = function(time) {
 };
 
 updateTime = function() {
-    audio = getAudio();
-    $("#time").html(prettyPrintTime(audio.currentTime) + " of " + prettyPrintTime(audio.duration));
-    createCookie("currentTime" + $(audio).data('id'), Math.floor(audio.currentTime));
-    if (loggedin == true){
-        if (update_server==true){
-        update_server = false;
-        $.post('user/progress',{file:$(audio).data('id'),progress:Math.floor(audio.currentTime)});
-        window.setTimeout(function() {
-            update_server=true;
-        }, 10000);
-        }
-        
-
-    }
+    audio_tag = getAudio();
+    $("#time").html(prettyPrintTime(audio_tag.currentTime) + " of " + prettyPrintTime(audio_tag.duration));
+    createCookie("currentTime" + $(audio_tag).data('id'), Math.floor(audio_tag.currentTime));
     if (sliding == false) {
-        $("#scrubber").attr("max", Math.floor(audio.duration));
-        $("#scrubber").attr("value", Math.floor(audio.currentTime));
+        $("#scrubber").attr("max", Math.floor(audio_tag.duration));
+        $("#scrubber").attr("value", Math.floor(audio_tag.currentTime));
     }
 }
 
 
 getPercentProg = function() {
-    var audio = this;
-    var endBuf = audio.buffered.end(0);
-    var soFar = parseInt(((endBuf / audio.duration) * 100));
+    audio_tag = this;
+    endBuf = audio_tag.buffered.end(0);
+    soFar = parseInt(((endBuf / audio_tag.duration) * 100));
     $(this).siblings(".loadStatus").html(soFar + '%');
 }
 
@@ -159,17 +134,24 @@ playPlaylistItem = function(playlist_item) {
     }
     current_playlist_item = playlist_item;
     createCookie("current_audio_id", current_playlist_item.attr('id'));
-    if (loggedin == true){
-        $.post('user/progress',{file:current_playlist_item.attr('id')});
-    }
     current_playlist_item.addClass("currentPlaylistItem");
     $("#current").html(current_playlist_item.html());
-    audio = $("#main_audio")
-    audio.data("id", current_playlist_item.data('id'));
-    audio.attr("src", current_playlist_item.data('src'));
+    audio_tag = $("#main_audio")
+    audio_tag.data("id", current_playlist_item.data('id'));
+    audio_tag.attr("src", current_playlist_item.data('src'));
     $("#scrubber").removeAttr("disabled");
-    getTimeFromCookie(audio)
+    getTimeFromCookie(audio_tag)
     $("#summary").html(summaries[current_playlist_item.data('id')]);
+    
+    $("#summary").find("img").load(function()  {
+        if (this.width> 320){
+            factor = 320/this.width;
+            this.width = this.width*factor;
+            this.height = this.height*factor;
+          }  
+        });
+
+    
 
 };
 
@@ -183,9 +165,6 @@ playThis = function(event) {
     return false;
 }
 
-switchStation = function() {
-    showPlaylist($("#stations").first().val());
-}
 
 showPlaylist = function(key) {
     $.getJSON('/json/files?stationid=' + key,
@@ -202,30 +181,9 @@ showPlaylist = function(key) {
             HTMLmarkup += '<dd data-src="' + data[i].mp3 + '"id="'+key+'-'+data[i].id+'" data-id="' + data[i].id + '" class="playlistItem" >' + data[i].name + '</dd>';
             summaries[data[i].id]=data[i].summary;
         };
-        if (key=="user"){
-            $('#userplaylist').empty()
-            $('#userplaylist').append(HTMLmarkup);            
-        }
-        else{
-            $('#playlist').empty()
-            $('#playlist').append(HTMLmarkup);            
-        }
+        $('#playlist').empty()
+        $('#playlist').append(HTMLmarkup);            
         $('.playlistItem').click(playThis);
-        if (loggedin == true && current_playlist_item==null){
-            $.get('user/progress',{file:$(audio).data('id')}, function(current_audio_id) {
-                playPlaylistItem( $("#"+current_audio_id));
-                if (current_playlist_item==null){
-                    playPlaylistItem($(".playlistItem").first());
-                }
-            });
-        }
-        else{
-            playPlaylistItem( $("#"+readCookie("current_audio_id")));
-            if (current_playlist_item==null){
-                playPlaylistItem($(".playlistItem").first());
-            }
-            
-        }
         if (current_playlist_item==null){
             playPlaylistItem( $("#"+readCookie("current_audio_id")));
         }
@@ -235,112 +193,19 @@ showPlaylist = function(key) {
     });
 }
 
-userInfo = function() {
-    $.getJSON('/json/userinfo',
-
-    function(data) {
-        if (data["login"] == "true"){
-            loggedin = true;
-            if (loggedin == true && current_playlist_item != null){
-                $.post('user/progress',{file:current_playlist_item.attr('id')});
-            }
-            $("#login").hide();
-            $("#logout").show();
-            $("#signup-sign").hide();
-            $("#userinfo").show();
-            $("#username").html(data["user"]);
-            showPlaylist("user");
-            $.getJSON('/user/feeds',
-
-            function(data) {
-                $('#userfeeds').empty()
-                $.each(data,
-                function(key, val) {
-                    $('#userfeeds').append("<li id='feed-"+key+"'>" + val + "</li>");
-                });
-
-                $.getJSON('/json/feeds',
-                function(data) {
-                    $('#feeds').empty();
-                    $('#feeds').append("<option>or select one from this list</option>");
-                    $.each(data,
-                    function(key, val) {
-                        if ($("#feed-"+key).length<1){
-                            $('#feeds').append("<option value='" + key + "'>" + val + "</option>");
-                        }
-                    });
-                    if($('#feeds').children().length<2){
-                        $('#feeds').hide();
-                    }
-                    else{
-                        $('#feeds').show();
-                    }
-                });
-
-            });
-
-        }
-        else{
-            loggedin = false;
-            //$("#login").show();
-            $("#logout").hide();
-            $("#signup-sign").show();
-            $("#userinfo").hide();
-            $("#username").empty();
-            $("#userplaylist").empty();
-        }
-    });
-}
-
-
-login = function() {
-    window.location.href = $("#login_url").val();
-}
-
-logout = function() {
-    $.get("/logout",function() {
-        userInfo()
-      });
-
-
-}
-    
-subscribe = function(){
-    
-    
-    $.post('user/feeds',$("#feedform").serialize(), function(data) {
-        $('#feedresult').html(data);
-    });
-    
-}
 
 $(document).ready(
 function() {
     $("#play").click(play);
     $("#pause").click(pause);
-    $("#login").click(login);
-    $("#logout").click(logout);
-    $("#subscribe").click(subscribe);
-    userInfo();
-    $.getJSON('/json/stations',
-    function(data) {
-        $.each(data,
-        function(key, val) {
-            $('#stations').append("<option class='station' value='" + key + "'>" + val + "</option>");
-        });
-        $("#stations").click(switchStation);
-        switchStation();
-
-    });
-    audio = $("#main_audio");
-    audio.bind('end', playNext, false);
-    audio.bind('timeupdate', updateTime, false);
-    
+    showPlaylist(2029);
+    audio_tag = $("#main_audio");
+    audio_tag.bind('end', playNext, false);
+    audio_tag.bind('timeupdate', updateTime, false);
     $( '#scrubber' ).change(function(){
-       audio = $("#main_audio");
-       audio.attr("currentTime",$("#scrubber").attr("value"));
+       audio_tag = $("#main_audio");
+       audio_tag.attr("currentTime",$("#scrubber").attr("value"));
     });
-
     $( '#scrubber' ).mouseup(function(){
        sliding = false;
        if (!paused_before_sliding){
@@ -349,11 +214,9 @@ function() {
 
 
     });
-
-
     $( '#scrubber' ).mousedown(function(){
        sliding = true;
-       if (!audio.paused){
+       if (!audio_tag.paused){
            paused_before_sliding = false;
            pause();
        }
