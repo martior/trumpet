@@ -18,10 +18,16 @@ dd { font-size: 12px; line-height: 22px; color: #777; }
 
 #stations-container{display: none; width: 320px; position: absolute; left: 0px; top: 0px; padding: 10px; height: 60px; }
 #stations{margin-top: 15px; margin-left: 20px;}
-#playlist{width: 320px; position: absolute; left: 0px; top: 80px;}
+#playlist-container{width: 320px; position: absolute; left: 0px; top: 80px;}
 #playlist dd,
 #playlist dt{
     padding-left: 30px;
+}
+#sleep-mode-container{
+    padding-left: 30px;
+    font-size: 10px; 
+    color: #777;
+    padding-bottom:30px;
 }
 #audio-player{ position: absolute; top:0; padding: 10px; height: 60px; padding-left: 30px;  }
 #summary{

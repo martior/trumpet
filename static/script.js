@@ -156,8 +156,10 @@ playPlaylistItem = function(playlist_item) {
 };
 
 playNext = function() {
-    playPlaylistItem(current_playlist_item.next(".playlistItem"));
-    current_playlist_item.next(".playlistItem")
+    if (!$("#sleep-mode").attr('checked')){
+        playPlaylistItem(current_playlist_item.next(".playlistItem"));
+        current_playlist_item.next(".playlistItem")        
+    }
 }
 playThis = function(event) {
     playPlaylistItem($(this));
@@ -186,9 +188,11 @@ showPlaylist = function(key) {
         $('.playlistItem').click(playThis);
         if (current_playlist_item==null){
             playPlaylistItem( $("#"+readCookie("current_audio_id")));
+            pause();
         }
         if (current_playlist_item==null){
             playPlaylistItem($(".playlistItem").first());
+            pasue();
         }
     });
 }

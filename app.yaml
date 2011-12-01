@@ -1,15 +1,11 @@
 application: skabb-radio
-version: 3
+version: 4
 runtime: python
 api_version: 1
 
 
 
 handlers:
-- url: /user.* 
-  login: required
-  auth_fail_action: redirect
-  script: src/user.py
 - url: /static
   static_dir: static
 - url: /javascripts
@@ -25,16 +21,16 @@ handlers:
 - url: /(.*\.(gif|png|jpg|ico|css|js|html))
   static_files: static/\1
   upload: static/(.*\.(gif|png|jpg|ico))
-- url: /oneoff
-  script: src/oneoff.py
+#- url: /oneoff
+#  script: src/oneoff.py
 - url: /feed/.*
   script: src/feed.py
-- url: /remote_api
-  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
-  login: admin
+#- url: /remote_api
+#  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+#  login: admin
 - url: .*
-  script: src/main.py
+  static_files: static/index.html
   
 builtins:
   - datastore_admin: on
-  - remote_api: on
+#  - remote_api: on
