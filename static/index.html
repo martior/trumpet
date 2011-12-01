@@ -34,12 +34,6 @@
 <body>
 
 
-    <div id="audio-player" role="main">
-        <div id="current">select show to begin playing</div><div id="time">00:00:00 of 00:00:00</div>
-        <input type="button" value="Play" id="playpause" onclick="playOrPause()"> 
-        <input id="scrubber" value="0" disabled="true" type="range" />            
-	    <audio id="main_audio" >Audio</audio>
-    </div>
 
     <div id="playlist-container">
         <dl id="playlist">
@@ -51,6 +45,13 @@
 
     <div id="summary"></div>
 
+    <div id="audio-player" role="main">
+        <div id="current">select show to begin playing</div><div id="time">00:00:00 of 00:00:00</div>
+        <input type="button" value="Play" id="playpause" onclick="playOrPause()"> 
+        <input id="scrubber" value="0" disabled="true" type="range" />            
+	    <audio id="main_audio" >Audio</audio>
+    </div>
+
 	<footer>
         <h1 id="logo">tunr</h1> © Martin Reistadbakk 2011 ✉ <a href="mailto:tunr@skabb.com">Email Me</a>
 	</footer>
@@ -61,7 +62,7 @@
 	<!-- JS
 	================================================== -->
     <script src="http://code.jquery.com/jquery-1.5.1.min.js"></script>
-    <script src="static/app.js"></script>
+    <script src="static/app.min.js"></script>
 	
 
 	
