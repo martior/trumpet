@@ -1,5 +1,5 @@
-application: skabb-radio
-version: 3
+application: webbmaster-messaging
+version: 1
 runtime: python
 api_version: 1
 
@@ -15,11 +15,13 @@ handlers:
 #- url: /remote_api
 #  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
 #  login: admin
+- url: /dashboard
+  script: src/dashboard.py
+- url: /api/*
+  script: src/api.py
 - url: /
-  static_files: static/index.html
-  upload: static/(.*\.(html))
-- url: .*
-  script: src/main.py
+ static_files: static/index.html
+ upload: static/(.*\.(html))
 
 
   
