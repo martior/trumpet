@@ -169,14 +169,71 @@
 }( window, document ));
 
 ;(function (win,doc) {
-alert("test");
+    theme = doc.createElement('link');
+    theme.rel = 'stylesheet';
+    theme.id = 'webmaster-messaging-theme';
+    theme.href = "http://trumpetapp.appspot.com/static/jackedup.css"
+    doc.body.appendChild(theme);
+    humane.waitForMove = true;
+    humane.timeout = 5000;
+    function createCookie(name, value) {
+        var exdate=new Date();
+        exdate.setDate(exdate.getDate() + 10);
+        var c_value=escape(value) + "; expires="+exdate.toUTCString();
+        document.cookie = name + "=" + value + "; path=/";
+    }
 
-theme = doc.createElement('link');
-theme.rel = 'stylesheet';
-theme.id = 'webmaster-messaging-theme';
-theme.href = "static/jackdup.css"
-doc.body.appendChild(theme);
+    function readCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
 
-humane("welcome back")
+
+
+    checkMessages = function() { 
+        var xmlhttp;
+
+        if (window.XMLHttpRequest)
+          {// code for IE7+, Firefox, Chrome, Opera, Safari
+          xmlhttp=new XMLHttpRequest();
+          }
+        else
+          {// code for IE6, IE5
+          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+          }
+
+        xmlhttp.onreadystatechange=function()
+        {
+        if (this.readyState==4 && this.status==200)
+          {
+              var message_nodes = this.responseXML.getElementsByTagName("message");
+              for (i = 0; i < message_nodes.length; i++) {
+               			id = message_nodes[i].getElementsByTagName("key")[0].firstChild.data;
+               			message = message_nodes[i].getElementsByTagName("value")[0].firstChild.data;
+                        if (!readCookie("trumpet-"+id)){
+                            createCookie("trumpet-"+id,true);
+                            humane.info(message);
+                            
+                        }
+               		}
+
+          }
+        }
+        xmlhttp.open("GET","http://trumpetapp.appspot.com/api/messages",true);
+        xmlhttp.send()
+        window.setTimeout(checkMessages, 10000);
+        };
+    checkMessages()
+    
+    
+
+
+
 
  }( window, document ));

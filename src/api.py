@@ -20,11 +20,11 @@ from google.appengine.ext.webapp import util
 #from google.appengine.ext import db
 #from google.appengine.api import users
 import os
-#import logging
+import logging
 from google.appengine.ext.webapp import template
 from src.models import Message
-from django.utils import simplejson
 
+from xml.dom import minidom
 #from datetime import datetime, timedelta,date
 
 
@@ -32,10 +32,27 @@ from django.utils import simplejson
 
 class MessageAPI(webapp.RequestHandler):
     def get(self):
-        messages={}
-        for message in Message.all().fetch(limit=25):
-            messages[str(message.key().id())]=str(message.title)
-        self.response.out.write(simplejson.dumps(messages))
+
+        host = self.request.host
+        logging.info(host)
+        cookies = self.request.cookies
+        impl = minidom.getDOMImplementation()
+        xml_doc = impl.createDocument(None, "messages", None)
+        root = xml_doc.firstChild
+        for m in Message.all().fetch(limit=25):
+            id = m.key().id()
+            if not u"trumpet-%s"%id in cookies.keys():
+                message = xml_doc.createElement(u"message")    
+                key = xml_doc.createElement(u"key")
+                value = xml_doc.createElement(u"value")
+                root.appendChild(message)
+                message.appendChild(key)
+                message.appendChild(value)
+                value.appendChild(xml_doc.createTextNode(unicode(m.title)))
+                key.appendChild(xml_doc.createTextNode(u"%s"%id))
+        self.response.headers["Content-Type"] = "text/xml"
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.out.write(xml_doc.toxml("utf-8"))
 
 
 def main():

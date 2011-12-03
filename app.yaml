@@ -1,4 +1,4 @@
-application: webbmaster-messaging
+application: trumpetapp
 version: 1
 runtime: python
 api_version: 1
@@ -8,23 +8,23 @@ api_version: 1
 handlers:
 - url: /static
   static_dir: static
-#- url: /oneoff
-#  script: src/oneoff.py
+- url: /oneoff
+  script: src/oneoff.py
 - url: /feed/.*
   script: src/feed.py
-#- url: /remote_api
-#  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
-#  login: admin
+- url: /remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  login: admin
 - url: /dashboard
   script: src/dashboard.py
-- url: /api/*
+- url: /api/.*
   script: src/api.py
 - url: /
- static_files: static/index.html
- upload: static/(.*\.(html))
+  static_files: static/index.html
+  upload: static/(.*\.(html))
 
 
   
 builtins:
   - datastore_admin: on
-#  - remote_api: on
+  - remote_api: on
