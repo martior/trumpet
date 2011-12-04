@@ -1,45 +1,57 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright 2007 Google Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp import util
-#from google.appengine.ext import db
-#from google.appengine.api import users
-import os
 import logging
-from google.appengine.ext.webapp import template
-from src.models import Message
 
 from xml.dom import minidom
+from urlparse import urlparse
 #from datetime import datetime, timedelta,date
+
+from google.appengine.ext import webapp
+from google.appengine.ext.webapp import util
+from google.appengine.api import memcache
+
+from src.models import Message, Site
+
+
 
 
 
 
 class MessageAPI(webapp.RequestHandler):
+
+    def query_for_data(self,netloc):
+        site = Site.all().filter("netloc =",netloc).fetch(limit=1)
+        logging.info(netloc)
+        logging.info(site)
+        logging.info(len(site))
+        if len(site)>0:
+            return Message.all().filter("site =", site[0]).fetch(limit=25)
+        else:
+            return []
+        
+    def get_data(self,netloc):
+        self.query_for_data(netloc)
+        data = memcache.get(netloc)
+        if data is not None:
+            return data
+        else:
+            data = self.query_for_data(netloc)
+            memcache.add(netloc, data, 10)
+            return data
+            
     def get(self):
 
-        host = self.request.host
-        logging.info(host)
+        host = urlparse(self.request.headers.get("Referer","")).hostname
+        if host is None:
+            return
+        if host.startswith("www."):
+            host = host[4:]
         cookies = self.request.cookies
         impl = minidom.getDOMImplementation()
         xml_doc = impl.createDocument(None, "messages", None)
         root = xml_doc.firstChild
-        for m in Message.all().fetch(limit=25):
+        for m in self.query_for_data(host):
             id = m.key().id()
             if not u"trumpet-%s"%id in cookies.keys():
                 message = xml_doc.createElement(u"message")    

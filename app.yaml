@@ -10,13 +10,13 @@ handlers:
   static_dir: static
 - url: /oneoff
   script: src/oneoff.py
-- url: /feed/.*
-  script: src/feed.py
 - url: /remote_api
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
   login: admin
-- url: /dashboard
+- url: /dashboard.*
   script: src/dashboard.py
+  login: required
+  secure: always
 - url: /api/.*
   script: src/api.py
 - url: /
