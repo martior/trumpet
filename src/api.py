@@ -43,25 +43,24 @@ class MessageAPI(webapp.RequestHandler):
     def get(self):
 
         host = urlparse(self.request.headers.get("Referer","")).hostname
-        if host is None:
-            return
-        if host.startswith("www."):
-            host = host[4:]
         cookies = self.request.cookies
         impl = minidom.getDOMImplementation()
         xml_doc = impl.createDocument(None, "messages", None)
         root = xml_doc.firstChild
-        for m in self.query_for_data(host):
-            id = m.key().id()
-            if not u"trumpet-%s"%id in cookies.keys():
-                message = xml_doc.createElement(u"message")    
-                key = xml_doc.createElement(u"key")
-                value = xml_doc.createElement(u"value")
-                root.appendChild(message)
-                message.appendChild(key)
-                message.appendChild(value)
-                value.appendChild(xml_doc.createTextNode(unicode(m.title)))
-                key.appendChild(xml_doc.createTextNode(u"%s"%id))
+        if host is not None:
+            if host.startswith("www."):
+                host = host[4:]
+            for m in self.query_for_data(host):
+                id = m.key().id()
+                if not u"trumpet-%s"%id in cookies.keys():
+                    message = xml_doc.createElement(u"message")    
+                    key = xml_doc.createElement(u"key")
+                    value = xml_doc.createElement(u"value")
+                    root.appendChild(message)
+                    message.appendChild(key)
+                    message.appendChild(value)
+                    value.appendChild(xml_doc.createTextNode(unicode(m.title)))
+                    key.appendChild(xml_doc.createTextNode(u"%s"%id))
         self.response.headers["Content-Type"] = "text/xml"
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.out.write(xml_doc.toxml("utf-8"))
