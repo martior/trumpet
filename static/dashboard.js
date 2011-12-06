@@ -31,24 +31,28 @@ function() {
 
 			$.each(data, function(i,value){
 				var tblRow =
-					"<tr>"
+					"<tr class='message-row' message-id='"+i+"'>"
 					+"<td><a href='/dashboard/"+i+"' netloc='"+i+"'>"+value+"</a></td>"
-					+"<td><span class='label success'>Active</span></td>"
+					+"<td>&nbsp;</td>"
+					+"<td><a class='btn danger delete-message' href='#'>delete</a></td>"
 					+"</tr>"
 				$(tblRow).appendTo("#messagetable tbody");
 			});
+		    $(".delete-message").click(function(e){
+                  e.preventDefault();
+                  deleteMessage($(this).parents(".message-row"));
+            });
+            
 		}
 
 	);
     }    
 
 
-    deleteMessages = function(){
-        message_id = ""
+    deleteMessage = function(message){
         $.ajax({
         type: "DELETE",
-		url: "dashboard/sites/"+window.site+"/messages/"+message_id,
-        data: dataString,
+		url: "dashboard/sites/"+window.site+"/messages/"+message.attr("message-id"),
         dataType: "json",
         success: function(data) {
 
@@ -60,18 +64,18 @@ function() {
 
             $("#message").html(m);
             $("#message").alert();
-            $("#netloc").val("");
-            getSites();
-            $("#addsite-modal").modal("hide")
+            message.remove()
         },
 
         error: function(data) {
             m = 
             "<div class='alert-message error'>"
+            +  "<a class='close' href='#'>×</a>"
             +  "<p>"+data.responseText+"</p>"
             +"</div>";
 
-            $("#modal-message").html(m);
+            $("#message").html(m);
+            $("#message").alert();
         }
 
         });
@@ -167,14 +171,21 @@ function() {
               +"</div>";
 
               $("#message").html(m);
+              $("#message").alert();
             $("#message").alert();
           }
 
           });          
 
       });
+      
+      $("#preview").click(function(e){
+          e.preventDefault();
+          humane.info($("#message-text").val());
+      });
+      
 
      $("#addsite-button").click(function(){
          $("#addsite-form").submit();
-     })
+     });
 });

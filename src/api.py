@@ -31,13 +31,12 @@ class MessageAPI(webapp.RequestHandler):
             return []
         
     def get_data(self,netloc):
-        self.query_for_data(netloc)
         data = memcache.get(netloc)
         if data is not None:
             return data
         else:
             data = self.query_for_data(netloc)
-            memcache.add(netloc, data, 10)
+            memcache.add(netloc, data, 60000)
             return data
             
     def get(self):
@@ -48,9 +47,10 @@ class MessageAPI(webapp.RequestHandler):
         xml_doc = impl.createDocument(None, "messages", None)
         root = xml_doc.firstChild
         if host is not None:
+            logging.debug("Possibly delivering %s messages to %s"%(len(self.get_data(host)),host))
             if host.startswith("www."):
                 host = host[4:]
-            for m in self.query_for_data(host):
+            for m in self.get_data(host):
                 id = m.key().id()
                 if not u"trumpet-%s"%id in cookies.keys():
                     message = xml_doc.createElement(u"message")    

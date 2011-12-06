@@ -25,6 +25,8 @@ from google.appengine.api import users
 from google.appengine.ext.webapp import template
 from django.utils import simplejson
 
+from google.appengine.api import memcache
+
 from src.models import User, Site, Message
 
 #from datetime import datetime, timedelta,date
@@ -143,14 +145,21 @@ class Messages(webapp.RequestHandler):
             self.response.out.write("You are not the owner of this site")
             return
         site = query[0]
-        query = Message.all()
-        query.filter('site =',site, 'ID =', message)
-        res = query.fetch(limit=1)        
-        if len(res)<1:
+        message = Message.get_by_id(long(message))
+        if message is None:
             self.response.set_status(404)        
             self.response.out.write("Message not found")
             return
-        res[0].delete()
+        logging.info(message.site.key().id())
+        logging.info(message.site.netloc)
+        logging.info(site.key().id())
+        logging.info(site.netloc)
+        if message.site.key().id() != site.key().id():
+            self.response.set_status(403)        
+            self.response.out.write("This message does not belong to this host")
+            return
+
+        message.delete()
         self.response.set_status(200)  
         self.response.out.write(simplejson.dumps({"message":"Message Deleted"}))
 
@@ -175,6 +184,7 @@ class Messages(webapp.RequestHandler):
         message.title = message_text
         message.site = site
         message.put()
+        memcache.delete(site.netloc)
         self.response.set_status(200)  
         self.response.out.write(simplejson.dumps({"message":"Message Added"}))
         
