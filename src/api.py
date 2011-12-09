@@ -16,17 +16,25 @@ from django.utils import simplejson
 class CloudFlareAPI(webapp.RequestHandler):
 
     def post(self):
-        logging.info(self.request)
-        ret = dict(result = "error",
-                   msg = "error",
-                   act = self.request.get("act",""),
-                   user_email = self.request.get("user_email",""),
-                   user_zone = self.request.get("user_zone",""),
+        logging.debug(self.request)
+        ret = dict(
+            result = "error",
+            msg = "error",
+            request = dict(
+                user_email = self.request.get("user_email",""),
+                user_zone = self.request.get("user_zone",""),
+                act = self.request.get("act",""),
+            ),
         )
-        user_tos = self.request.get("user_tos","")
-        user_tokens = self.request.get("user_tokens","")
-        sub_plan = self.request.get("sub_plan","")
-        return(simplejson.dumps(ret))
+
+        if ret["request"]["act"] == "user_create":
+           ret["request"]["user_tokens"] = self.request.get("user_tokens","")
+           ret["request"]["user_tos"] = self.request.get("user_tos",False)
+           ret["result"]="success"
+           
+        #sub_plan = self.request.get("sub_plan","")
+        logging.debug(ret)
+        self.response.out.write(simplejson.dumps(ret))
         
 
 
