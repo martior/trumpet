@@ -8,7 +8,6 @@ import logging
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.api import memcache
-
 from src.models import Zone
 
 
@@ -21,12 +20,15 @@ class MessageAPI(webapp.RequestHandler):
     def query_for_data(self,zoneid):
         zone = Zone.get_by_id(long(zoneid))
         impl = minidom.getDOMImplementation()
-        xml_doc = impl.createDocument(None, "messages", None)
+        xml_doc = impl.createDocument(None, "message", None)
         root = xml_doc.firstChild
-        if zone is not None:
-            message = xml_doc.createElement(u"message")    
-            root.appendChild(message)
-            message.appendChild(xml_doc.createTextNode(zone.message_text))
+        if zone is not None and zone.message_text !=u"":
+            message_text = xml_doc.createElement(u"message_text")    
+            message_timestamp = xml_doc.createElement(u"message_timestamp")    
+            root.appendChild(message_text)
+            root.appendChild(message_timestamp)
+            message_text.appendChild(xml_doc.createTextNode(zone.message_text))
+            message_timestamp.appendChild(xml_doc.createTextNode(zone.message_timestamp.isoformat()))
         return xml_doc.toxml("utf-8")
                 
     def get_message(self,zoneid):

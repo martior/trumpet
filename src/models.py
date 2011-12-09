@@ -11,6 +11,7 @@ class Zone(db.Model):
     user_deactive_date = db.DateTimeProperty()
     active = db.BooleanProperty()
     message_text = db.StringProperty()
+    message_timestamp = db.DateTimeProperty()
     message_expires = db.DateTimeProperty() 
 
 

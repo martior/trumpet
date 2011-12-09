@@ -1,45 +1,14 @@
 ;(function (win,doc) {
-
-  function run() {
-    if (animationInProgress && !win.humane.forceNew) return;
-    if (!queue.length) { remove(); return; }
-    animationInProgress = true;
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
-    }
-    timeout = setTimeout(function(){ // allow notification to stay alive for timeout
-      if (!eventing) {
-        on (doc.body,'mousemove',remove);
-        on (doc.body,'click',remove);
-        on (doc.body,'keypress',remove);
-        on (doc.body,'touchstart',remove);
-        eventing = true;
-        if(!win.humane.waitForMove) remove();
-      }
-    }, win.humane.timeout);
-
-    var next = queue.shift();
-    var type = next[0];
-    var content = next[1];
-    if ( isArray(content) ) content = '<ul><li>' + content.join('<li>') + '</ul>';
-
-    humaneEl.innerHTML = content;
-    animate(type,1);
-  }
-
-
-
-}( window, document ));
-
-;(function (win,doc) {
     var trumpetEl = null;
     var animationInProgress = false;
     var useFilter = /msie [678]/i.test(navigator.userAgent); // sniff, sniff
     var isSetup = false;
     var message = "";
+    var message_timestamp = "";
+    var message_dismissed_timestamp = "";
     var animate_status = 0;
-    
+    var zone_id = 0;
+    var xmlhttp;
     var on, off
     if ('addEventListener' in win) {
       on  = function (obj,type,fn) { obj.addEventListener(type,fn,false)    };
@@ -50,7 +19,8 @@
       off = function (obj,type,fn) { obj.detachEvent('on'+type,fn) };
     }
     
-    
+
+
     
     on (win,'load',function () {
       var transitionSupported = ( function (style) {
@@ -61,46 +31,77 @@
         return false;
       }(doc.body.style));
       if (!transitionSupported) animate = jsAnimateOpacity; // use js animation when no transition support
-
-      setup();  checkMessages();
+      trumpet_script = document.getElementById("trumpet");
+      if (trumpet_script != null){
+          data_zone = trumpet_script.getAttribute("data-zone");
+          if (data_zone != null){
+              zone_id = data_zone;
+          }
+      }
+      if(zone_id != 0){
+        setup();  window.setTimeout(checkMessages, 2000);
+      }
     });
     
-
-    function remove() {
-      animate(0);
-    }
     
 
     function setup() {
-    theme = doc.createElement('link');
-    theme.rel = 'stylesheet';
-    theme.id = 'webmaster-messaging-theme';
-    theme.href = "/static/trumpet.css"
-    doc.body.appendChild(theme);
+        theme = doc.createElement('link');
+        theme.rel = 'stylesheet';
+        theme.id = 'webmaster-messaging-theme';
+        theme.href = "/static/trumpet.css"
+        doc.body.appendChild(theme);
 
-      trumpetEl = doc.createElement('div');
-      trumpetEl.id = 'trumpet';
-      trumpetEl.className = 'trumpet';
-      doc.body.appendChild(trumpetEl);
-      on (trumpetEl,'click',function () {
-          remove()
-      });
-      isSetup = true;
+          trumpetEl = doc.createElement('div');
+          trumpetEl.id = 'trumpet_message';
+          trumpetEl.className = 'trumpet';
+          doc.body.appendChild(trumpetEl);
+          message_dismissed_timestamp = readCookie("trumped_dt");
+          on (trumpetEl,'click',function () {
+              animate(0);
+              message_dismissed_timestamp = message_timestamp;
+              createCookie("trumped_dt",message_timestamp);
+          });
+      
+          if (window.XMLHttpRequest)
+            {// code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp=new XMLHttpRequest();
+            }
+          else
+            {// code for IE6, IE5
+            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+          xmlhttp.onreadystatechange=function()
+          {
+          if (this.readyState==4 && this.status==200)
+            {
+                var message_nodes = this.responseXML.getElementsByTagName("message");
+                if (message_nodes.length>0 && message_nodes[0].firstChild != null){
+                      message_text = message_nodes[0].getElementsByTagName("message_text")
+                      new_message_timestamp = message_nodes[0].getElementsByTagName("message_timestamp")[0].firstChild.data;
+                      new_message = message_text[0].firstChild.data;
+                      if (new_message != message){
+                          if (animate_status == 1){
+                              animate(0);
+                              setTimeout(function(new_message,message_timestamp){
+                                  showMessage(new_message,new_message_timestamp)
+                              },500);
+
+                          }
+                          else{
+                              showMessage(new_message,new_message_timestamp)                        }  
+                          }  
+                }
+                else{
+                    animate(0);
+                }
+              window.setTimeout(checkMessages, 15000);                      
+            }
+          }
+          isSetup = true;
     }
-    
-    
-    function end(){
-      setTimeout(function(){
-        trumpetEl.className = "trumpet";
-        trumpetEl.innerHTML = "";
-        createCookie("trumpet-message", message);
-        message = ""
-
-      },500);
-    }
-
-
-    
+        
     function createCookie(name, value) {
         var exdate=new Date();
         exdate.setDate(exdate.getDate() + 1);
@@ -184,63 +185,30 @@
         }, 100 / 20);
       }
     }   
+    
+    function end(){
+      setTimeout(function(){
+        trumpetEl.className = "trumpet";
+        trumpetEl.innerHTML = "";
+        message = "";
+        message_timestamp = "";
 
+      },500);
+    }
+    
 
-    checkMessages = function() { 
-        var xmlhttp;
-
-        if (window.XMLHttpRequest)
-          {// code for IE7+, Firefox, Chrome, Opera, Safari
-          xmlhttp=new XMLHttpRequest();
-          }
-        else
-          {// code for IE6, IE5
-          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-          }
-
-        xmlhttp.onreadystatechange=function()
-        {
-        if (this.readyState==4 && this.status==200)
-          {
-              var message_nodes = this.responseXML.getElementsByTagName("message");
-              if (message_nodes.length>0 && message_nodes[0].firstChild != null){
-                    new_message = message_nodes[0].firstChild.data;
-                    if (new_message != message){
-                        if (animate_status == 1){
-                            animate(0);
-                            setTimeout(function(){
-                                message = new_message;
-                                trumpetEl.innerHTML = new_message;
-                                animate(1);
-                            },500);
-                            
-                        }
-                        else{
-                            message = new_message;
-                            trumpetEl.innerHTML = new_message;
-                            animate(1);   
-                        }  
-                    }  
-              }
-              else{
-                  animate(0);
-                  end();
-              }
-
-                    window.setTimeout(checkMessages, 10000);                      
-
-        
-
-          }
+    showMessage = function(new_message,new_message_timestamp){
+        if (message_dismissed_timestamp != new_message_timestamp){
+            message = new_message;
+            message_timestamp = new_message_timestamp;
+            trumpetEl.innerHTML = new_message;
+            animate(1);            
         }
-        xmlhttp.open("GET","/3.xml",true);
+        
+    }
+    
+    checkMessages = function() { 
+        xmlhttp.open("GET","http://trumpetapp.appspot.com/"+zone_id+".xml",true);
         xmlhttp.send()
-        };
-
-    
-    
-
-
-
-
+    }
  }( window, document ));

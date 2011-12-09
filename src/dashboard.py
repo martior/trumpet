@@ -51,6 +51,7 @@ class Dashboard(webapp.RequestHandler):
         zone = zone[0]
         zone.message_text = self.request.get('message')
         zone.message_expires  = datetime.now()+timedelta(days=7)
+        zone.message_timestamp = datetime.now()
         zone.put()
         memcache.delete(str(zone.key().id()))
         self.response.set_status(200)  
