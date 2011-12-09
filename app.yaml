@@ -18,6 +18,9 @@ handlers:
   upload: static/(.*\.(html))
 - url: /(.*).xml
   script: src/api.py
+- url: /api/*
+  script: src/api.py
+
 - url: /.*
   script: src/dashboard.py
   secure: always

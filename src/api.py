@@ -10,9 +10,24 @@ from google.appengine.ext.webapp import util
 from google.appengine.api import memcache
 from src.models import Zone
 
+from django.utils import simplejson
 
 
+class CloudFlareAPI(webapp.RequestHandler):
 
+    def post(self):
+        logging.info(self.request)
+        ret = dict(result = "error",
+                   msg = "error",
+                   act = self.request.get("act",""),
+                   user_email = self.request.get("user_email",""),
+                   user_zone = self.request.get("user_zone",""),
+        )
+        user_tos = self.request.get("user_tos","")
+        user_tokens = self.request.get("user_tokens","")
+        sub_plan = self.request.get("sub_plan","")
+        return(simplejson.dumps(ret))
+        
 
 
 class MessageAPI(webapp.RequestHandler):
@@ -49,6 +64,7 @@ class MessageAPI(webapp.RequestHandler):
 def main():
     application = webapp.WSGIApplication([
                                           ('/(.*).xml', MessageAPI),
+                                          ('/api/cloudflare', CloudFlareAPI),
                                         ],
                                          debug=True)
     util.run_wsgi_app(application)
