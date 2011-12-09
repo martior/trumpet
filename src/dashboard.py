@@ -20,14 +20,13 @@ import logging
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
-from google.appengine.ext import db
-from google.appengine.api import users
 from google.appengine.ext.webapp import template
 from django.utils import simplejson
 
 from google.appengine.api import memcache
+from datetime import datetime, timedelta
 
-from src.models import User, Site, Message
+from src.models import Zone
 
 #from datetime import datetime, timedelta,date
 
@@ -36,167 +35,38 @@ class Dashboard(webapp.RequestHandler):
     def render(self, template_file, template_values = {}):
         path = os.path.join(os.path.dirname(__file__)[:-4], 'templates', template_file)
         self.response.out.write(template.render(path, template_values))
-    def get(self):
-        user = users.get_current_user()
-
-        query = db.Query(User)
-        query.filter('user =', user)
-        results = query.fetch(limit=1)
-        if len(results)<1:
-            user_object = User()
-            user_object.user = user
-            user_object.put()
-            logging.info("found user in database")
-        else:
-            user_object = results[0]
-
-        
-        self.render("dashboard.html",template_values={"user":user})
-    def post(self,station):
-        pass
+    def get(self,token):
+        zone = Zone.all().filter("user_token =",token).fetch(limit=1)
+        if len(zone)>0:
+            self.render("dashboard.html",template_values={"zone":zone[0].user_zone, "token": token, "message_text": zone[0].message_text})
 
 
 
-
-class Sites(webapp.RequestHandler):
-    def get(self,site=""):
-        user = users.get_current_user()
-        query = db.Query(Site)
-        query.filter('owner =', user)
-
-        sites={}
-        for site in  query.fetch(limit=50)            :
-            sites[str(site.netloc)]=str(site.verified)
-        self.response.out.write(simplejson.dumps(sites))
-        
-    def delete(self,site):
-        pass
-    def post(self):
-        netloc = self.request.get('netloc')
-        #zzz validate netloc here
-        if netloc.startswith("www."):
-            netloc = netloc[4:]
-
-        if len(netloc) < 4:
+    def post(self,token):
+        zone = Zone.all().filter("user_token =",token).fetch(limit=1)
+        if len(zone)<1:
             self.response.set_status(403)        
-            self.response.out.write("Hostname is too short")
-            return
-        
-        query = Site.all()
-        query.filter('netloc =',netloc)
-        results = query.fetch(1)
-        if len(results)<1:
-            user = users.get_current_user()
-            site = Site()
-            site.owner = user
-            site.netloc = netloc
-            site.put()
-            self.response.set_status(200)  
-            self.response.out.write(simplejson.dumps({"message":"Site Added"}))
-        else:
-            self.response.set_status(403)   
-            self.response.out.write("Site allready exists")     
-
-
-
-
-class Messages(webapp.RequestHandler):
-    def get(self,site,message=""):
-
-        user = users.get_current_user()
-        query = db.Query(Site)
-        query.filter('netloc =', site)
-        res = query.fetch(limit=1)
-        if len(res)<1:
-            self.response.set_status(404)        
             self.response.out.write("Site not found")
             return
-        if query[0].owner != user:
-            self.response.set_status(403)        
-            self.response.out.write("You are not the owner of this site")
-            return
-
-        site = res[0]
-        query = Message.all()
-        query.filter('site =',site)
-
-    
-        messages={}
-        for message in  query.fetch(limit=50)            :
-            messages[str(message.key().id())]=str(message.title)
-        self.response.out.write(simplejson.dumps(messages))
-
-
-
-
-
-    def delete(self,site,message):
-
-        user = users.get_current_user()
-        query = db.Query(Site)
-        query.filter('netloc =', site)
-        res = query.fetch(limit=1)
-        if len(res)<1:
-            self.response.set_status(404)        
-            self.response.out.write("Site not found")
-            return
-        if query[0].owner != user:
-            self.response.set_status(403)        
-            self.response.out.write("You are not the owner of this site")
-            return
-        site = query[0]
-        message = Message.get_by_id(long(message))
-        if message is None:
-            self.response.set_status(404)        
-            self.response.out.write("Message not found")
-            return
-        logging.info(message.site.key().id())
-        logging.info(message.site.netloc)
-        logging.info(site.key().id())
-        logging.info(site.netloc)
-        if message.site.key().id() != site.key().id():
-            self.response.set_status(403)        
-            self.response.out.write("This message does not belong to this host")
-            return
-
-        message.delete()
+        zone = zone[0]
+        zone.message_text = self.request.get('message')
+        zone.message_expires  = datetime.now()+timedelta(days=7)
+        zone.put()
+        memcache.delete(str(zone.key().id()))
         self.response.set_status(200)  
-        self.response.out.write(simplejson.dumps({"message":"Message Deleted"}))
+        if zone.message_text=="":
+            message = "Message deleted"
+        else:
+            message = "Message added"
+        self.response.out.write(simplejson.dumps({"message":message,"message_text":zone.message_text}))
 
 
-    def post(self,site):
 
-        user = users.get_current_user()
-        query = db.Query(Site)
-        query.filter('netloc =', site)
-        res = query.fetch(limit=1)
-        if len(res)<1:
-            self.response.set_status(404)        
-            self.response.out.write("Site not found")
-            return
-        if query[0].owner != user:
-            self.response.set_status(403)        
-            self.response.out.write("You are not the owner of this site")
-            return
-        site = res[0]
-        message_text = self.request.get('message')
-        message = Message()
-        message.title = message_text
-        message.site = site
-        message.put()
-        memcache.delete(site.netloc)
-        self.response.set_status(200)  
-        self.response.out.write(simplejson.dumps({"message":"Message Added"}))
-        
         
 
 def main():
     application = webapp.WSGIApplication([
-                                          ('/dashboard', Dashboard),
-                                          ('/dashboard/sites/(.*)/messages', Messages),
-                                          ('/dashboard/sites/(.*)/messages/(.*)', Messages),
-                                          ('/dashboard/sites/(.*)', Sites),
-                                          ('/dashboard/sites', Sites),
+                                          ('/(.*)', Dashboard),
 
                                         ],
                                          debug=True)

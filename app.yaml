@@ -13,15 +13,14 @@ handlers:
 - url: /remote_api
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
   login: admin
-- url: /dashboard.*
-  script: src/dashboard.py
-  login: required
-  secure: always
-- url: /api/.*
-  script: src/api.py
 - url: /
   static_files: static/index.html
   upload: static/(.*\.(html))
+- url: /(.*).xml
+  script: src/api.py
+- url: /.*
+  script: src/dashboard.py
+  secure: always
 
 
   

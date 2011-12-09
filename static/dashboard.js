@@ -1,178 +1,57 @@
 $(document).ready(
 function() {
-
-    getSites = function(){
-    $("#sitetable tbody").html("");
-    		$.getJSON(
-    			"dashboard/sites",
-    			function(data){
-    				$.each(data, function(i,enabled){
-    					var tblRow =
-    						"<tr>"
-    						+"<td><a href='/dashboard/"+i+"' netloc='"+i+"'>"+i+"</a></td>"
-    						+"<td><span class='label success'>Active</span></td>"
-    						+"</tr>"
-    					$(tblRow).appendTo("#sitetable tbody");
-    				});
-    			$("#sitetable tbody tr td a").click(navigateToSite);
-    			}
-
-    		);
-    }
-
-
-
-    getMessages = function(){
-    $("#messagetable tbody").html("");
-    
-    $.getJSON(
-		"dashboard/sites/"+window.site+"/messages",
-		function(data){
-
-			$.each(data, function(i,value){
-				var tblRow =
-					"<tr class='message-row' message-id='"+i+"'>"
-					+"<td><a href='/dashboard/"+i+"' netloc='"+i+"'>"+value+"</a></td>"
-					+"<td>&nbsp;</td>"
-					+"<td><a class='btn danger delete-message' href='#'>delete</a></td>"
-					+"</tr>"
-				$(tblRow).appendTo("#messagetable tbody");
-			});
-		    $(".delete-message").click(function(e){
-                  e.preventDefault();
-                  deleteMessage($(this).parents(".message-row"));
-            });
-            
-		}
-
-	);
-    }    
-
-
-    deleteMessage = function(message){
-        $.ajax({
-        type: "DELETE",
-		url: "dashboard/sites/"+window.site+"/messages/"+message.attr("message-id"),
-        dataType: "json",
-        success: function(data) {
-
-            m = 
-            "<div class='alert-message success'>"
-            +  "<a class='close' href='#'>×</a>"
-            +  "<p>"+data.message+"</p>"
-            +"</div>";
-
-            $("#message").html(m);
-            $("#message").alert();
-            message.remove()
-        },
-
-        error: function(data) {
-            m = 
-            "<div class='alert-message error'>"
-            +  "<a class='close' href='#'>×</a>"
-            +  "<p>"+data.responseText+"</p>"
-            +"</div>";
-
-            $("#message").html(m);
-            $("#message").alert();
+    var message = "";
+    setup = function(){
+        message = $("#message-text").attr("placeholder");
+        if (message != ""){
+            $("#preview").attr("disabled",true);
+            $("#send").html("Delete message")
         }
-
-        });
+        else{
+            $("#preview").removeAttr("disabled");
+            $("#send").html("Send message")   
+        }
+        
+        
     }
+    setup();
+    $("#message-text").focusin(function() {
+           $("#send").html("Send message")   
+    });
+    $("#message-text").focusout(function() {
+           if ($("#message-text").val()=="" & $("#message-text").attr("placeholder")!=""){
+               $("#send").html("Delete message");
+           }
+           else{
+               $("#send").html("Send message");
+           }
+    });
 
-    navigateToSite = function(e){
-        e.preventDefault();
-        var site = $(this).attr("netloc");
-        window.site = site;
-        $("#sites").hide();
-        getMessages()
-        $("#messages").show();
-        $("home").removeClass("active")
-        breadcrumb = '<li id="site-breadcrumb" class="active"><a  href="#">'+site+'</a> <span class="divider">/</span></li>'
-        $(breadcrumb).appendTo("#breadcrumb");
-    }
-
-    navigateHome = function(){
-        $("#sites").show();
-        $("#messages").hide();
-        $("home").addClass("active")
-        $("#site-breadcrumb").remove();
-    }
-
-
-
-
-    $("#home a").click(navigateHome)
-    getSites();
-    $("#addsite-form").submit(function(e){
-        e.preventDefault();
-
-         dataString = $("#addsite-form").serialize();
-         $.ajax({
-         type: "POST",
-         url: "dashboard/sites",
-         data: dataString,
-         dataType: "json",
-         success: function(data) {
-
-             m = 
-             "<div class='alert-message success'>"
-             +  "<a class='close' href='#'>×</a>"
-             +  "<p>"+data.message+"</p>"
-             +"</div>";
-
-             $("#message").html(m);
-             $("#message").alert();
-             $("#netloc").val("");
-             getSites();
-             $("#addsite-modal").modal("hide")
-         },
-
-         error: function(data) {
-             m = 
-             "<div class='alert-message error'>"
-             +  "<p>"+data.responseText+"</p>"
-             +"</div>";
-
-             $("#modal-message").html(m);
-         }
-
-         });          
-
-     });
      $("#addmessage-form").submit(function(e){
          e.preventDefault();
-
           dataString = $("#addmessage-form").serialize();
+          message = $("#message-text").val();
+          if (message==""){
+            $("#send").html("Deleting...");              
+          }
+          else{
+            $("#send").html("Sending...")
+          }
+
           $.ajax({
           type: "POST",
-          url: "dashboard/sites/"+window.site+"/messages",
+          url: "",
           data: dataString,
           dataType: "json",
           success: function(data) {
-
-              m = 
-              "<div class='alert-message success'>"
-              +  "<a class='close' href='#'>×</a>"
-              +  "<p>"+data.message+"</p>"
-              +"</div>";
-
-              $("#message").html(m);
-              $("#message").alert();
+              $("#message").html(data.message);
+              $("#message-text").attr("placeholder",data.message_text);
               $("#message-text").val("");
-              getMessages();
+              setup()
           },
 
           error: function(data) {
-              m = 
-              "<div class='alert-message error'>"
-              +  "<p>"+data.responseText+"</p>"
-              +"</div>";
-
-              $("#message").html(m);
-              $("#message").alert();
-            $("#message").alert();
+              $("#message").html(data.responseText);
           }
 
           });          
@@ -185,7 +64,10 @@ function() {
       });
       
 
-     $("#addsite-button").click(function(){
-         $("#addsite-form").submit();
+     $("#send").click(function(e){
+         e.preventDefault();
+         $("#addmessage-form").submit();
+
      });
+
 });

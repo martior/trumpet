@@ -1,8 +1,10 @@
-from src.models import Message, Site
+from src.models import Zone
 
 def main():
-    message = Message()
-    message.title ="Site maintenance tonight from 10:00 CET"
+    message = Zone()
+    message.user_zone ="test"
+    message.user_token ="test"
+    message.message_text ="test"
     message.put()
 if __name__ == '__main__':
     main()

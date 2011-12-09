@@ -1,0 +1,82 @@
+html,
+body {
+  height: 100%;
+  background: #390;
+}
+.trumpet {
+  position: fixed;
+  -moz-transition: all 0.3s ease-out;
+  -webkit-transition: all 0.3s ease-out;
+  -ms-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  z-index: -1;
+}
+.trumpet.trumpet-animate,
+.trumpet.trumpet-js-animate {
+  z-index: 100000;
+}
+.trumpet {
+  font-family: Ubuntu, Arial, sans-serif;
+  text-align: center;
+  font-size: 16px;
+  top: 10px;
+  right: 10px;
+  opacity: 0.4;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
+  width: 220px;
+  color: #fff;
+  padding: 20px;
+  background-color: #111;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  -moz-box-shadow: 0 4px 4px -4px #000;
+  -webkit-box-shadow: 0 4px 4px -4px #000;
+  -ms-box-shadow: 0 4px 4px -4px #000;
+  -o-box-shadow: 0 4px 4px -4px #000;
+  box-shadow: 0 4px 4px -4px #000;
+  -moz-transform: translateY(-40px);
+  -webkit-transform: translateY(-40px);
+  -ms-transform: translateY(-40px);
+  -o-transform: translateY(-40px);
+  transform: translateY(-40px);
+}
+.trumpet p,
+.trumpet ul {
+  margin: 0;
+  padding: 0;
+}
+.trumpet ul {
+  list-style: none;
+}
+
+.trumpet.trumpet-animate {
+  opacity: 0.9;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90);
+  -moz-transform: translateY(0);
+  -webkit-transform: translateY(0);
+  -ms-transform: translateY(0);
+  -o-transform: translateY(0);
+  transform: translateY(0);
+}
+
+.trumpet.trumpet-js-animate {
+  opacity: 0.9;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90);
+  -moz-transform: translateY(0);
+  -webkit-transform: translateY(0);
+  -ms-transform: translateY(0);
+  -o-transform: translateY(0);
+  transform: translateY(0);
+}
+
+
+
+
+.trumpet.trumpet-animate:hover {
+}
+.trumpet.trumpet-js-animate:hover {
+}

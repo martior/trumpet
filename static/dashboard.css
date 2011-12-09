@@ -1,9 +1,98 @@
+body {
+  background: #2B2013;
+  font: 14px/21px "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #958067;
+  -webkit-font-smoothing: antialiased;
+  /* Fix for webkit rendering */
+
+  -webkit-text-size-adjust: none;
+}
 header {
-  padding-top: 40px;
+  background-image: url("/static/trumpet.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 31px;
+  margin: 60px 0 60px 0;
 }
-section {
-  padding-top: 60px;
+.container {
+  max-width: 640px;
+  margin: 0 auto;
 }
-section > .row {
-  margin-bottom: 10px;
+p {
+  line-height: 1em;
+  margin-top: 1em;
+}
+form {
+  font-size: 200%;
+  padding: 1em;
+  background: #040D12;
+  border: 1px solid #55788D;
+  -moz-border-radius: 23px;
+  -webkit-border-radius: 23px;
+  border-radius: 23px;
+  color: #647E8D;
+}
+#message {
+  font-size: 50%;
+  display: inline-block;
+}
+input {
+  font-size: 80%;
+  width: 100%;
+  color: #958067;
+  background-color: #2B2013;
+  border: 1px solid #55788D;
+  padding: 0.25em;
+  margin-bottom: .25em;
+  -moz-border-radius: 13px;
+  -webkit-border-radius: 13px;
+  border-radius: 13px;
+}
+::-webkit-input-placeholder {
+  color: #1C1206;
+}
+:-moz-placeholder {
+  color: #1C1206;
+}
+button {
+  font-size: 80%;
+  margin-top: 1em;
+}
+a.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  width: 120px;
+  background-color: #0C1215;
+  border: 1px solid #55788D;
+  padding: 4px 12px;
+  -moz-border-radius: 13px;
+  -webkit-border-radius: 13px;
+  border-radius: 13px;
+  color: #647E8D;
+  display: inline-block;
+  font-size: 11px;
+  text-decoration: none;
+  cursor: pointer;
+  line-height: 21px;
+  font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+a.button:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+input[type="button"]:hover {
+  color: #0C1215;
+  background: #647E8D;
+  border: 1px solid #040D12;
+}
+a.button:active,
+button:active,
+input[type="submit"]:active,
+input[type="reset"]:active,
+input[type="button"]:active {
+  border: 1px solid #888;
+  border-bottom: 1px solid #aaa;
+  border-right: 1px solid #aaa;
 }

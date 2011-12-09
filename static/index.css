@@ -1,0 +1,29 @@
+body {
+  background: #2B2013;
+  font: 14px/21px "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #958067;
+  -webkit-font-smoothing: antialiased;
+  /* Fix for webkit rendering */
+
+  -webkit-text-size-adjust: none;
+}
+header {
+  background-image: url("/static/trumpet.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 31px;
+  margin: 60px 0 60px 0;
+}
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+}
+section {
+  padding: 1em;
+  background: #958067;
+  color: #2B2013;
+  border: 1px solid #1C1206;
+  -moz-border-radius: 23px;
+  -webkit-border-radius: 23px;
+  border-radius: 23px;
+}

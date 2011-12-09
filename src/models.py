@@ -3,23 +3,14 @@
 
 from google.appengine.ext import db
 
-class User(db.Model):
-    user = db.UserProperty()
+class Zone(db.Model):
+    user_zone = db.StringProperty()
+    user_email = db.StringProperty()
+    user_token = db.StringProperty()
+    user_singup_date = db.DateTimeProperty()
+    user_deactive_date = db.DateTimeProperty()
+    active = db.BooleanProperty()
+    message_text = db.StringProperty()
+    message_expires = db.DateTimeProperty() 
 
-
-class Site(db.Model):
-    netloc = db.StringProperty()
-    verified = db.BooleanProperty()
-    owner = db.UserProperty()
-    users = db.ListProperty(db.Key)
-
-
-
-class Message(db.Model):
-    type = db.StringProperty()
-    title = db.StringProperty()
-    text= db.TextProperty()
-    site = db.ReferenceProperty(Site)
-    #expire
-    
 
