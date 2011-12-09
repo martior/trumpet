@@ -38,6 +38,7 @@
     var useFilter = /msie [678]/i.test(navigator.userAgent); // sniff, sniff
     var isSetup = false;
     var message = "";
+    var animate_status = 0;
     
     var on, off
     if ('addEventListener' in win) {
@@ -74,7 +75,7 @@
     theme = doc.createElement('link');
     theme.rel = 'stylesheet';
     theme.id = 'webmaster-messaging-theme';
-    theme.href = "static/jackedup.css"
+    theme.href = "/static/trumpet.css"
     doc.body.appendChild(theme);
 
       trumpetEl = doc.createElement('div');
@@ -90,7 +91,6 @@
     
     function end(){
       setTimeout(function(){
-        animationInProgress = false;
         trumpetEl.className = "trumpet";
         trumpetEl.innerHTML = "";
         createCookie("trumpet-message", message);
@@ -120,6 +120,7 @@
     }
 
     function animate (level) {
+      animate_status = level;
       if(level === 1){
         trumpetEl.className = "trumpet trumpet-animate";
       }
@@ -133,27 +134,28 @@
     var setOpacity = (function(){
       if (useFilter) {
         return function(opacity){
-          humaneEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity = opacity*100;
+          trumpetEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity = opacity*100;
         }
       }
       else {
-        return function (opacity) { humaneEl.style.opacity = String(opacity); }
+        return function (opacity) { trumpetEl.style.opacity = String(opacity); }
       }
     }());
 
     function jsAnimateOpacity(type,level){
       var interval;
       var opacity;
+      animate_status = level;
 
       if (level === 1) {
         opacity = 0;
-        humaneEl.className = "humane humane-js-animate humane-" + type;
-        if (humaneEl.filters) humaneEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity = 0; // reset value so hover states work
+        trumpetEl.className = "trumpet trumpet-js-animate trumpet-" + type;
+        if (trumpetEl.filters) trumpetEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity = 0; // reset value so hover states work
 
-        if (win.humane.forceNew) {
+        if (win.trumpet.forceNew) {
           opacity = useFilter
-            ? humaneEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity/100|0
-            : humaneEl.style.opacity|0;
+            ? trumpetEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity/100|0
+            : trumpetEl.style.opacity|0;
         }
         interval = setInterval(function(){
           if (opacity < 1) {
@@ -175,13 +177,13 @@
             setOpacity(opacity);
           }
           else {
-            humaneEl.className = humaneEl.className.replace(" humane-js-animate","");
+            trumpetEl.className = trumpetEl.className.replace("trumpet-js-animate","");
             clearInterval(interval);
             end();
           }
         }, 100 / 20);
       }
-    }
+    }   
 
 
     checkMessages = function() { 
@@ -201,17 +203,31 @@
         if (this.readyState==4 && this.status==200)
           {
               var message_nodes = this.responseXML.getElementsByTagName("message");
-              if (message_nodes.length>0){
+              if (message_nodes.length>0 && message_nodes[0].firstChild != null){
                     new_message = message_nodes[0].firstChild.data;
                     if (new_message != message){
-                        trumpetEl.innerHTML = message_nodes[0].firstChild.data;
-                        animate(1);
-                        
-                    } 
-                    window.setTimeout(checkMessages, 10000);
-                    
+                        if (animate_status == 1){
+                            animate(0);
+                            setTimeout(function(){
+                                message = new_message;
+                                trumpetEl.innerHTML = new_message;
+                                animate(1);
+                            },500);
+                            
+                        }
+                        else{
+                            message = new_message;
+                            trumpetEl.innerHTML = new_message;
+                            animate(1);   
+                        }  
+                    }  
               }
-                      
+              else{
+                  animate(0);
+                  end();
+              }
+
+                    window.setTimeout(checkMessages, 10000);                      
 
         
 
