@@ -2,7 +2,6 @@
     var trumpetEl = null;
     var animationInProgress = false;
     var useFilter = /msie [678]/i.test(navigator.userAgent); // sniff, sniff
-    var isSetup = false;
     var message = "";
     var message_timestamp = "";
     var message_dismissed_timestamp = "";
@@ -39,17 +38,29 @@
           }
       }
       if(zone_id != 0){
-        setup();  window.setTimeout(checkMessages, 2000);
+        setup();
       }
     });
     
     
 
     function setup() {
-        theme = doc.createElement('link');
-        theme.rel = 'stylesheet';
-        theme.id = 'webmaster-messaging-theme';
-        theme.href = "http://trumpetapp.appspot.com/static/trumpet.css"
+        theme = doc.createElement('style');
+        theme.type = 'text/css';
+        theme.innerHTML = "html,body{height:100%;}\
+        .trumpet{position:fixed;-moz-transition:all 0.6s ease-in-out;-webkit-transition:all 0.6s ease-in-out;-ms-transition:all 0.6s ease-in-out;-o-transition:all 0.6s ease-in-out;transition:all 0.6s ease-in-out;z-index:-1;}\
+        .trumpet.trumpet-animate,.trumpet.trumpet-js-animate{z-index:100000;}\
+        .trumpet{font-family:Helvetica Neue,Helvetica,san-serif;font-size:18px;letter-spacing:-1px;top:20px;left:30%;opacity:0;filter:progid:dximagetransform.microsoft.alpha(Opacity=0);width:40%;color:#222;padding:10px;text-align:center;background-color:#999;border:1px solid #777;-moz-border-radius:13px;-webkit-border-radius:13px;-ms-border-radius:13px;-o-border-radius:13px;border-radius:13px;-moz-box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);-webkit-box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);-ms-box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);-o-box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);-moz-transform:translatey(-100px);-webkit-transform:translatey(-100px);-ms-transform:translatey(-100px);-o-transform:translatey(-100px);transform:translatey(-100px);}\
+        .trumpet p,.trumpet ul{margin:0;padding:0;}\
+        .trumpet ul{list-style:none;}\
+        .trumpet.trumpet-info{background-color:#fff;color:#fff;text-shadow:0 -1px 1px rgba(0, 0, 0, 0.35);}\
+        .trumpet.trumpet-success{background-color:#64ff64;color:#fff;text-shadow:0 -1px 1px rgba(0, 0, 0, 0.35);}\
+        .trumpet.trumpet-error{background-color:#ee5f5b;color:#fff;text-shadow:0 -1px 1px rgba(0, 0, 0, 0.35);}\
+        .trumpet.trumpet-animate{opacity:1;filter:progid:dximagetransform.microsoft.alpha(Opacity=100);-moz-transform:translatey(0);-webkit-transform:translatey(0);-ms-transform:translatey(0);-o-transform:translatey(0);transform:translatey(0);}\
+        .trumpet.trumpet-animate:hover{opacity:0.7;filter:progid:dximagetransform.microsoft.alpha(Opacity=70);}\
+        .trumpet.trumpet-js-animate{opacity:1;filter:progid:dximagetransform.microsoft.alpha(Opacity=100);-moz-transform:translatey(0);-webkit-transform:translatey(0);-ms-transform:translatey(0);-o-transform:translatey(0);transform:translatey(0);}\
+        .trumpet.trumpet-js-animate:hover{opacity:0.7;filter:progid:dximagetransform.microsoft.alpha(Opacity=70);}\
+        "
         doc.body.appendChild(theme);
 
           trumpetEl = doc.createElement('div');
@@ -99,7 +110,7 @@
               window.setTimeout(checkMessages, 15000);                      
             }
           }
-          isSetup = true;
+        checkMessages();          
     }
         
     function createCookie(name, value) {
