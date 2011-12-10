@@ -31,6 +31,10 @@ class CloudFlareAPI(webapp.RequestHandler):
            ret["request"]["user_tokens"] = self.request.get("user_tokens","")
            ret["request"]["user_tos"] = self.request.get("user_tos",False)
            ret["result"]="success"
+           ret["response"] = dict(
+                user_email = self.request.get("user_email",""),
+                user_zone = self.request.get("user_zone",""),
+           )
            
         #sub_plan = self.request.get("sub_plan","")
         logging.debug(ret)

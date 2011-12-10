@@ -49,7 +49,7 @@
         theme = doc.createElement('link');
         theme.rel = 'stylesheet';
         theme.id = 'webmaster-messaging-theme';
-        theme.href = "/static/trumpet.css"
+        theme.href = "http://trumpetapp.appspot.com/static/trumpet.css"
         doc.body.appendChild(theme);
 
           trumpetEl = doc.createElement('div');

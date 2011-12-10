@@ -1,61 +1,77 @@
-body {
-  background: #2B2013;
+html {
   font: 14px/21px "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #958067;
+  color: #1C1206;
+  height: 100%;
   -webkit-font-smoothing: antialiased;
   /* Fix for webkit rendering */
 
   -webkit-text-size-adjust: none;
+  /* IE10 */
+  background-image: -ms-radial-gradient(center top, ellipse farthest-side, #ffffff 0%, #958067 100%);
+  /* Mozilla Firefox */
+  background-image: -moz-radial-gradient(center top, ellipse farthest-side, #ffffff 0%, #958067 100%);
+  /* Opera */
+  background-image: -o-radial-gradient(center top, ellipse farthest-side, #ffffff 0%, #958067 100%);
+  /* Webkit (Safari/Chrome 10) */
+  background-image: -webkit-gradient(radial, center top, 0, center top, 480, color-stop(0, #ffffff), color-stop(1, #958067));
+  /* Webkit (Chrome 11+) */
+  background-image: -webkit-radial-gradient(center top, ellipse farthest-side, #ffffff 0%, #958067 100%);
+  /* Proposed W3C Markup */
+  background-image: radial-gradient(center top, ellipse farthest-side, #ffffff 0%, #958067 100%);
+}
+body {
+  margin-top: 0;
+  height: 100%;
 }
 header {
   background-image: url("/static/trumpet.png");
   background-repeat: no-repeat;
   background-position: center center;
-  height: 31px;
-  margin: 60px 0 60px 0;
+  height: 81px;
+  -moz-border-bottom-right-radius: 23px;
+  -webkit-border-bottom-right-radius: 23px;
+  border-bottom-right-radius: 23px;
+  -moz-border-bottom-left-radius: 23px;
+  -webkit-border-bottom-left-radius: 23px;
+  border-bottom-right-left: 23px;
+  max-width: 700px;
+  margin: 0 auto;
 }
-.container {
+section {
   max-width: 640px;
   margin: 0 auto;
+  height: 100%;
 }
 p {
   line-height: 1em;
   margin-top: 1em;
 }
 form {
-  font-size: 200%;
-  padding: 1em;
-  background: #040D12;
-  border: 1px solid #55788D;
-  -moz-border-radius: 23px;
-  -webkit-border-radius: 23px;
-  border-radius: 23px;
-  color: #647E8D;
+  margin: 2em 0;
+  color: #1C1206;
 }
 #message {
-  font-size: 50%;
   display: inline-block;
 }
 input {
-  font-size: 80%;
+  font-size: 150%;
   width: 100%;
-  color: #958067;
-  background-color: #2B2013;
-  border: 1px solid #55788D;
+  color: #1C1206;
+  background-color: white;
+  border: 1px solid transparent;
   padding: 0.25em;
   margin-bottom: .25em;
-  -moz-border-radius: 13px;
-  -webkit-border-radius: 13px;
-  border-radius: 13px;
+  -moz-border-radius: 9px;
+  -webkit-border-radius: 9px;
+  border-radius: 9px;
 }
 ::-webkit-input-placeholder {
-  color: #1C1206;
+  color: #958067;
 }
 :-moz-placeholder {
-  color: #1C1206;
+  color: #958067;
 }
 button {
-  font-size: 80%;
   margin-top: 1em;
 }
 a.button,
@@ -64,15 +80,14 @@ input[type="submit"],
 input[type="reset"],
 input[type="button"] {
   width: 120px;
-  background-color: #0C1215;
-  border: 1px solid #55788D;
+  background: white;
+  border: 1px solid transparent;
   padding: 4px 12px;
-  -moz-border-radius: 13px;
-  -webkit-border-radius: 13px;
-  border-radius: 13px;
-  color: #647E8D;
+  -moz-border-radius: 9px;
+  -webkit-border-radius: 9px;
+  border-radius: 9px;
+  color: #1C1206;
   display: inline-block;
-  font-size: 11px;
   text-decoration: none;
   cursor: pointer;
   line-height: 21px;
@@ -83,9 +98,8 @@ button:hover,
 input[type="submit"]:hover,
 input[type="reset"]:hover,
 input[type="button"]:hover {
-  color: #0C1215;
-  background: #647E8D;
-  border: 1px solid #040D12;
+  color: white;
+  background: #958067;
 }
 a.button:active,
 button:active,
