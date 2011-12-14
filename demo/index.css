@@ -6,7 +6,7 @@ body {
   margin-top: 0;
 }
 #header {
-  background-image: url("/static/trumpet.png");
+  background-image: url("trumpet.png");
   background-repeat: no-repeat;
   background-position: center center;
   height: 81px;
