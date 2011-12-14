@@ -48,20 +48,19 @@
     
 
     function setup() {
-        theme = doc.createElement('link');
+        theme = doc.createElement('style');
         //theme.type = 'text/css';
-        theme.setAttribute("rel", "stylesheet")
+        //theme.setAttribute("rel", "stylesheet")
         theme.setAttribute("type", "text/css")
-        theme.setAttribute("href", "trumpet.css")
-        //style = "html,body{height:100%;} .trumpet{position:fixed;-moz-transition:all 0.6s ease-in-out;-webkit-transition:all 0.6s ease-in-out;-ms-transition:all 0.6s ease-in-out;-o-transition:all 0.6s ease-in-out;transition:all 0.6s ease-in-out;z-index:-1;} .trumpet.trumpet-animate,.trumpet.trumpet-js-animate{z-index:100000;} .trumpet{font-family:Helvetica Neue,Helvetica,san-serif;font-size:18px;letter-spacing:-1px;top:20px;left:30%;opacity:0;filter:progid:dximagetransform.microsoft.alpha(Opacity=0);width:40%;color:#222;padding:10px;text-align:center;background-color:#999;border:1px solid #777;-moz-border-radius:13px;-webkit-border-radius:13px;-ms-border-radius:13px;-o-border-radius:13px;border-radius:13px;-moz-box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);-webkit-box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);-ms-box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);-o-box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);-moz-transform:translatey(-100px);-webkit-transform:translatey(-100px);-ms-transform:translatey(-100px);-o-transform:translatey(-100px);transform:translatey(-100px);} .trumpet p,.trumpet ul{margin:0;padding:0;} .trumpet ul{list-style:none;} .trumpet.trumpet-info{background-color:#fff;color:#fff;text-shadow:0 -1px 1px rgba(0, 0, 0, 0.35);} .trumpet.trumpet-success{background-color:#64ff64;color:#fff;text-shadow:0 -1px 1px rgba(0, 0, 0, 0.35);} .trumpet.trumpet-error{background-color:#ee5f5b;color:#fff;text-shadow:0 -1px 1px rgba(0, 0, 0, 0.35);} .trumpet.trumpet-animate{opacity:1;filter:progid:dximagetransform.microsoft.alpha(Opacity=100);-moz-transform:translatey(0);-webkit-transform:translatey(0);-ms-transform:translatey(0);-o-transform:translatey(0);transform:translatey(0);} .trumpet.trumpet-animate:hover{opacity:0.7;filter:progid:dximagetransform.microsoft.alpha(Opacity=70);} .trumpet.trumpet-js-animate{opacity:1;filter:progid:dximagetransform.microsoft.alpha(Opacity=100);-moz-transform:translatey(0);-webkit-transform:translatey(0);-ms-transform:translatey(0);-o-transform:translatey(0);transform:translatey(0);} .trumpet.trumpet-js-animate:hover{opacity:0.7;filter:progid:dximagetransform.microsoft.alpha(Opacity=70);}";
-        //if(theme.styleSheet){
-        //    theme.styleSheet.cssText = style;
-        //}
-        //else{
-        //    theme.innerHTML = style;
-        //}
-        doc.body.appendChild(theme);
-
+        //theme.setAttribute("href", "trumpet.css")
+        style = ".trumpet { position: fixed; -moz-transition: all 0.6s ease-in-out; -webkit-transition: all 0.6s ease-in-out; -ms-transition: all 0.6s ease-in-out; -o-transition: all 0.6s ease-in-out; transition: all 0.6s ease-in-out; z-index: -1; font-family: Helvetica Neue, Helvetica, san-serif; font-size: 18px; top: -30px; left: 0; opacity: 0; filter: progid:dximagetransform.microsoft.alpha(Opacity=0); width: 100%; height: 25px; color: #222; padding: 10px; text-align: center; background-color: #999; border-bottom: 1px solid #777; } .trumpet.trumpet-animate, .trumpet.trumpet-js-animate { z-index: 100000; } .trumpet.trumpet-animate { top: 0px; opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } .trumpet.trumpet-js-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-js-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } ";
+        if(theme.styleSheet){
+            theme.styleSheet.cssText = style;
+        }
+        else{
+            theme.innerHTML = style;
+        }
+        document.getElementsByTagName("head")[0].appendChild(theme);
           trumpetEl = doc.createElement('div');
           trumpetEl.id = 'trumpet_message';
           trumpetEl.className = 'trumpet';
@@ -72,7 +71,7 @@
               message_dismissed_timestamp = message_timestamp;
               //createCookie("trumped_dt",message_timestamp);
           });
-          setTimeout(showMessage,50);
+          setTimeout(showMessage,1000);
           
           
       
