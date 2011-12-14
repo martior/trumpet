@@ -5,7 +5,7 @@ html {
 body {
   margin-top: 0;
 }
-header {
+#header {
   background-image: url("/static/trumpet.png");
   background-repeat: no-repeat;
   background-position: center center;
@@ -19,7 +19,7 @@ header {
   max-width: 700px;
   margin: 0 auto;
 }
-section {
+#section {
   max-width: 640px;
   margin: 0 auto;
   height: 100%;
