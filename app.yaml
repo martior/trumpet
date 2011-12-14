@@ -8,14 +8,13 @@ api_version: 1
 handlers:
 - url: /static
   static_dir: static
+- url: /demo
+  static_dir: static
 - url: /oneoff
   script: src/oneoff.py
 - url: /remote_api
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
   login: admin
-- url: /api/.*
-  script: src/api.py
-  secure: always
 - url: /
   static_files: static/index.html
   upload: static/(.*\.(html))

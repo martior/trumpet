@@ -3,8 +3,7 @@
     var animationInProgress = false;
     var useFilter = /msie [678]/i.test(navigator.userAgent); // sniff, sniff
     var message = "";
-    var message_timestamp = "";
-    var message_dismissed_timestamp = "";
+    var message_dismissed = "";
     var animate_status = 0;
     var xmlhttp;
     var on, off
@@ -16,9 +15,6 @@
       on  = function (obj,type,fn) { obj.attachEvent('on'+type,fn) };
       off = function (obj,type,fn) { obj.detachEvent('on'+type,fn) };
     }
-    
-
-
     
     on (win,'load',function () {
       var transitionSupported = ( function (style) {
@@ -35,41 +31,54 @@
           if (data_message != null){
               message = data_message;
           }
-          data_timestamp = trumpet_script.getAttribute("data-timestamp");
-          if (data_timestamp != null){
-              message_timestamp = data_timestamp;
-          }
       }
       if(message != ""){
         setup();
       }
     });
     
+    //code from: http://msdn.microsoft.com/en-us/library/ms537509(v=vs.85).aspx
+    function getInternetExplorerVersion()
+  // Returns the version of Internet Explorer or a -1
+  // (indicating the use of another browser).
+  {
+    var rv = -1; // Return value assumes failure.
+    if (navigator.appName == 'Microsoft Internet Explorer')
+    {
+      var ua = navigator.userAgent;
+      var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+      if (re.exec(ua) != null)
+        rv = parseFloat( RegExp.$1 );
+    }
+    return rv;
+  }
     
 
     function setup() {
         theme = doc.createElement('style');
-        theme.type = 'text/css';
-        style = "html,body{height:100%;} .trumpet{position:fixed;-moz-transition:all 0.6s ease-in-out;-webkit-transition:all 0.6s ease-in-out;-ms-transition:all 0.6s ease-in-out;-o-transition:all 0.6s ease-in-out;transition:all 0.6s ease-in-out;z-index:-1;} .trumpet.trumpet-animate,.trumpet.trumpet-js-animate{z-index:100000;} .trumpet{font-family:Helvetica Neue,Helvetica,san-serif;font-size:18px;letter-spacing:-1px;top:20px;left:30%;opacity:0;filter:progid:dximagetransform.microsoft.alpha(Opacity=0);width:40%;color:#222;padding:10px;text-align:center;background-color:#999;border:1px solid #777;-moz-border-radius:13px;-webkit-border-radius:13px;-ms-border-radius:13px;-o-border-radius:13px;border-radius:13px;-moz-box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);-webkit-box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);-ms-box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);-o-box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);box-shadow:0 1px 2px rgba(0, 0, 0, 0.5);-moz-transform:translatey(-100px);-webkit-transform:translatey(-100px);-ms-transform:translatey(-100px);-o-transform:translatey(-100px);transform:translatey(-100px);} .trumpet p,.trumpet ul{margin:0;padding:0;} .trumpet ul{list-style:none;} .trumpet.trumpet-info{background-color:#fff;color:#fff;text-shadow:0 -1px 1px rgba(0, 0, 0, 0.35);} .trumpet.trumpet-success{background-color:#64ff64;color:#fff;text-shadow:0 -1px 1px rgba(0, 0, 0, 0.35);} .trumpet.trumpet-error{background-color:#ee5f5b;color:#fff;text-shadow:0 -1px 1px rgba(0, 0, 0, 0.35);} .trumpet.trumpet-animate{opacity:1;filter:progid:dximagetransform.microsoft.alpha(Opacity=100);-moz-transform:translatey(0);-webkit-transform:translatey(0);-ms-transform:translatey(0);-o-transform:translatey(0);transform:translatey(0);} .trumpet.trumpet-animate:hover{opacity:0.7;filter:progid:dximagetransform.microsoft.alpha(Opacity=70);} .trumpet.trumpet-js-animate{opacity:1;filter:progid:dximagetransform.microsoft.alpha(Opacity=100);-moz-transform:translatey(0);-webkit-transform:translatey(0);-ms-transform:translatey(0);-o-transform:translatey(0);transform:translatey(0);} .trumpet.trumpet-js-animate:hover{opacity:0.7;filter:progid:dximagetransform.microsoft.alpha(Opacity=70);}";
+        //theme.type = 'text/css';
+        //theme.setAttribute("rel", "stylesheet")
+        theme.setAttribute("type", "text/css")
+        //theme.setAttribute("href", "trumpet.css")
+        style = ".trumpet { position: absolute; -moz-transition: all 0.6s ease-in-out; -webkit-transition: all 0.6s ease-in-out; -ms-transition: all 0.6s ease-in-out; -o-transition: all 0.6s ease-in-out; transition: all 0.6s ease-in-out; z-index: -1; font-family: Helvetica Neue, Helvetica, san-serif; font-size: 18px; top: -50px; left: 0; opacity: 0; filter: progid:dximagetransform.microsoft.alpha(Opacity=0); width: 100%; color: #222; padding: 5px; text-align: center; background-color: #999; border-bottom: 1px solid #777; } .trumpet.trumpet-animate, .trumpet.trumpet-js-animate { z-index: 100000; top: 0px; } .trumpet.trumpet-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } .trumpet.trumpet-js-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-js-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } ";
         if(theme.styleSheet){
             theme.styleSheet.cssText = style;
         }
         else{
             theme.innerHTML = style;
         }
-        doc.body.appendChild(theme);
-
+        document.getElementsByTagName("head")[0].appendChild(theme);
           trumpetEl = doc.createElement('div');
           trumpetEl.id = 'trumpet_message';
           trumpetEl.className = 'trumpet';
-          doc.body.appendChild(trumpetEl);
-          message_dismissed_timestamp = readCookie("trumped_dt");
+          document.getElementsByTagName("body")[0].appendChild(trumpetEl);
+          message_dismissed = readCookie("trumpetapp_dm");
           on (trumpetEl,'click',function () {
               animate(0);
-              message_dismissed_timestamp = message_timestamp;
-              createCookie("trumped_dt",message_timestamp);
+              message_dismissed = message;
+              createCookie("trumpetapp_dm",message);
           });
-          setTimeout(showMessage,50);
+          setTimeout(showMessage,1000);
           
           
       
@@ -116,14 +125,14 @@
       }
     }());
 
-    function jsAnimateOpacity(type,level){
+    function jsAnimateOpacity(level){
       var interval;
       var opacity;
       animate_status = level;
 
       if (level === 1) {
         opacity = 0;
-        trumpetEl.className = "trumpet trumpet-js-animate trumpet-" + type;
+        trumpetEl.className = "trumpet trumpet-js-animate";
         if (trumpetEl.filters) trumpetEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity = 0; // reset value so hover states work
 
         if (win.trumpet.forceNew) {
@@ -164,14 +173,13 @@
         trumpetEl.className = "trumpet";
         trumpetEl.innerHTML = "";
         message = "";
-        message_timestamp = "";
 
       },500);
     }
     
 
     showMessage = function(){
-        if (message_dismissed_timestamp != message_timestamp){
+        if (message_dismissed != message){
             trumpetEl.innerHTML = message;
             animate(1);            
         }
