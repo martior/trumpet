@@ -45,6 +45,21 @@
       }
     });
     
+    //code from: http://msdn.microsoft.com/en-us/library/ms537509(v=vs.85).aspx
+    function getInternetExplorerVersion()
+  // Returns the version of Internet Explorer or a -1
+  // (indicating the use of another browser).
+  {
+    var rv = -1; // Return value assumes failure.
+    if (navigator.appName == 'Microsoft Internet Explorer')
+    {
+      var ua = navigator.userAgent;
+      var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+      if (re.exec(ua) != null)
+        rv = parseFloat( RegExp.$1 );
+    }
+    return rv;
+  }
     
 
     function setup() {
@@ -53,7 +68,7 @@
         //theme.setAttribute("rel", "stylesheet")
         theme.setAttribute("type", "text/css")
         //theme.setAttribute("href", "trumpet.css")
-        style = "* html body { height:100%;} .trumpet { position: fixed; -moz-transition: all 0.6s ease-in-out; -webkit-transition: all 0.6s ease-in-out; -ms-transition: all 0.6s ease-in-out; -o-transition: all 0.6s ease-in-out; transition: all 0.6s ease-in-out; z-index: -1; font-family: Helvetica Neue, Helvetica, san-serif; font-size: 18px; top: -30px; left: 0; opacity: 0; filter: progid:dximagetransform.microsoft.alpha(Opacity=0); width: 100%; height: 25px; color: #222; padding: 10px; text-align: center; background-color: #999; border-bottom: 1px solid #777; } .trumpet.trumpet-animate, .trumpet.trumpet-js-animate { z-index: 100000; top: 0px; } .trumpet.trumpet-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } .trumpet.trumpet-js-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-js-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } ";
+        style = ".trumpet { position: absolute; -moz-transition: all 0.6s ease-in-out; -webkit-transition: all 0.6s ease-in-out; -ms-transition: all 0.6s ease-in-out; -o-transition: all 0.6s ease-in-out; transition: all 0.6s ease-in-out; z-index: -1; font-family: Helvetica Neue, Helvetica, san-serif; font-size: 18px; top: -30px; left: 0; opacity: 0; filter: progid:dximagetransform.microsoft.alpha(Opacity=0); width: 100%; height: 25px; color: #222; padding: 10px; text-align: center; background-color: #999; border-bottom: 1px solid #777; } .trumpet.trumpet-animate, .trumpet.trumpet-js-animate { z-index: 100000; top: 0px; } .trumpet.trumpet-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } .trumpet.trumpet-js-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-js-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } ";
         if(theme.styleSheet){
             theme.styleSheet.cssText = style;
         }
@@ -64,7 +79,7 @@
           trumpetEl = doc.createElement('div');
           trumpetEl.id = 'trumpet_message';
           trumpetEl.className = 'trumpet';
-          doc.body.appendChild(trumpetEl);
+          document.getElementsByTagName("body")[0].appendChild(trumpetEl);
           message_dismissed_timestamp = readCookie("trumped_dt");
           on (trumpetEl,'click',function () {
               animate(0);
