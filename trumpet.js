@@ -107,7 +107,7 @@
           trumpetEl.id = 'trumpet_message';
           trumpetEl.className = 'trumpet';
           document.getElementsByTagName("body")[0].appendChild(trumpetEl);
-          message_dismised = readCookie("trumpetapp_dm");
+          message_dismissed = readCookie("trumpetapp_dm");
           on (trumpetEl,'click',function () {
               animate(0);
               message_dismissed = murmurhash3_32_gc(message,1)+"";
@@ -214,6 +214,8 @@
     
 
     showMessage = function(){
+		alert(message_dismissed);
+		alert(murmurhash3_32_gc(message,1)+"");
         if (message_dismissed != murmurhash3_32_gc(message,1)+""){
             trumpetEl.innerHTML = message;
             animate(1);            
