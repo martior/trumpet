@@ -110,8 +110,8 @@
           message_dismised = readCookie("trumpetapp_dm");
           on (trumpetEl,'click',function () {
               animate(0);
-              message_dismissed = message;
-              createCookie("trumpetapp_dm",murmurhash3_32_gc(message,1));
+              message_dismissed = murmurhash3_32_gc(message,1);
+              createCookie("trumpetapp_dm",message_dismissed);
           });
           setTimeout(showMessage,1000);
           
