@@ -25,7 +25,7 @@
         return false;
       }(doc.body.style));
       if (!transitionSupported) animate = jsAnimateOpacity; // use js animation when no transition support
-      trumpet_script = document.getElementById("trumpet");
+      trumpet_script = document.getElementById("trumpetappcf");
       if (trumpet_script != null){
           data_message = trumpet_script.getAttribute("data-message");
           if (data_message != null){
