@@ -214,8 +214,6 @@
     
 
     showMessage = function(){
-		alert(message_dismissed);
-		alert(murmurhash3_32_gc(message,1)+"");
         if (message_dismissed != murmurhash3_32_gc(message,1)+""){
             trumpetEl.innerHTML = message;
             animate(1);            
