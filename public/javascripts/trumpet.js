@@ -110,7 +110,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
                 self.message_dismissed = self.murmurhash3_32_gc(self.config.message, 1) + "";
                 self.createCookie(self.message_dismissed);
             });
-            setTimeout(this.showMessage, 1000,this);
+            this.showMessage(this);
 
         },
         createCookie: function(value) {
