@@ -5,26 +5,25 @@
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudflare/dom", "cloudflare/path", "cloudflare/console", "trumpet/config"], function($, user, dom, path, console, _config) {
+CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudflare/dom", "cloudflare/path", "cloudflare/console", "trumpet/config"], function($, user, dom, path, _console, _config) {
     var Trumpet = function SopaProtest(config) {
             this.trumpetEl = null;
             this.useFilter = /msie [678]/i.test(navigator.userAgent); // sniff, sniff
             this.message_dismissed = "";
             this.animate_status = 0;
             this.config = config
-            if (config.onCloudflare) {
+            //if (this.config.onCloudflare) {
                 this.cookie = "__trumpetapp_dm"
-            }
+            //}
         }
     //var cdnPath = "//ajax.cloudflare.com/cdn-cgi/nexp/";
-    var cdnPath = //trumpet.tunr.in/public/
+    var cdnPath = "//trumpet.tunr.in/public/"
     var config = $.extend({
-        selector: "header, h1, h2, h3, p, li, span, em",
         onCloudflare: false,
-        regex: '.{5}'
+        message: "",
     }, _config)
 
-
+    console.log(config);
     var trumpet = new Trumpet(config)
 
     
@@ -35,11 +34,11 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
             if (this.config.message != "") {
                 this.setup();
             }
-        }
+        },
 
         styleSheet : function(){
             return $('<link rel="stylesheet" media="screen" href="' + cdnPath + 'stylesheets/trumpet.css">');
-        }
+        },
 
         murmurhash3_32_gc: function(key, seed) {
             var remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i;
@@ -90,7 +89,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
             h1 ^= h1 >>> 16;
 
             return h1 >>> 0;
-        }
+        },
 
         setup: function() {
             var transitionSupported = (function(style) {
@@ -99,33 +98,33 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
                     if (prefix + 'ransition' in style) return true;
                 }
                 return false;
-            }(doc.body.style));
+            }(document.body.style));
             if (!transitionSupported){
                 this.animate = this.jsAnimateOpacity; // use js animation when no transition support
             }
 
-            this.trumpetEl = doc.createElement('div');
+            this.trumpetEl = document.createElement('div');
             this.trumpetEl.id = 'trumpet_message';
             this.trumpetEl.className = 'trumpet';
             document.getElementsByTagName("body")[0].appendChild(this.trumpetEl);
             this.message_dismissed = this.readCookie();
-            on(this.trumpetEl, 'click', function() {
+            $(this.trumpetEl).click(function() {
                 this.animate(0);
                 this.message_dismissed = this.murmurhash3_32_gc(message, 1) + "";
                 this.createCookie(this.message_dismissed);
             });
-            setTimeout(showMessage, 1000);
+            setTimeout(this.showMessage, 1000);
 
 
 
-        }
+        },
 
         createCookie: function(value) {
             var exdate = new Date();
             exdate.setDate(exdate.getDate() + 1);
             var c_value = escape(value) + "; expires=" + exdate.toUTCString();
             document.cookie = this.cookie + "=" + value + "; path=/";
-        }
+        },
 
         readCookie: function (name) {
             var nameEQ = this.cookie + "=";
@@ -136,7 +135,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
                 if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
             }
             return null;
-        }
+        },
 
         animate: function (level) {
             this.animate_status = level;
@@ -146,7 +145,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
                 this.trumpetEl.className = this.trumpetEl.className.replace(" trumpet-animate", "");
                 end();
             }
-        }
+        },
 
         // if CSS Transitions not supported, fallback to JS Animation
         setOpacity: function() {
@@ -159,7 +158,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
                     this.trumpetEl.style.opacity = String(opacity);
                 }
             }
-        }
+        },
 
         jsAnimateOpacity: function(level) {
             var interval;
@@ -196,7 +195,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
                     }
                 }, 100 / 20);
             }
-        }
+        },
 
         end: function () {
             setTimeout(function() {
@@ -205,12 +204,12 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
                 this.config.message = "";
 
             }, 500);
-        }
+        },
 
 
-        showMessage = function() {
-            if (this.message_dismissed != this.murmurhash3_32_gc(message, 1) + "") {
-                this.trumpetEl.innerHTML = message;
+        showMessage: function() {
+            if (this.message_dismissed != this.murmurhash3_32_gc(this.config.message, 1) + "") {
+                this.trumpetEl.innerHTML = this.config.message;
                 this.animate(1);
             }
 
