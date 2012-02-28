@@ -1,0 +1,60 @@
+{
+    "name": "Trumpet",
+    "description": "Enables webmaster to speak to their users by displaying text on a banner on top of their site. Use for site maintenance messages.",
+    "keywords" : [
+        "webmaster-tools"
+        ],
+    "version": "0.0.1",
+    "contributors": [
+    {
+        "name" : "Martin Reistadbakk",
+        "email" : "martin@reistadbakk.com"
+    },
+    ],
+        "repository" : {
+            "type" : "git",
+            "url" : "https://github.com/martior/trumpet.git"
+        },
+        "main" : "./public/javascripts/trumpet.js",
+        "dependencies" : {
+            "jquery"    :  "~1.7"
+        },
+        "licenses" : [
+        {
+            "type": "MIT",
+            "url": "http://www.opensource.org/licenses/MIT"
+		}],
+        "implements" : "AMD",
+        "scripts" : {
+        },
+        "config" : {
+            "assets" : {
+            },
+            "payment": {},
+            "interface": [
+            {
+                "id": "message",
+                "name": "Displya text",
+                "description": "The text you would like displayed on your site. Leave blank to disable Trumpet.",
+                "type": "string"
+            },
+            {
+                "id": "persistent",
+                "name": "Persistence",
+                "description": "Text is shown on first visit only. If you would like this to happen on every visit, switch to the Persistent mode.",
+                "type": "select",
+                "options": [
+                {
+                    "label": "First visit only",
+                    "value": false
+                },
+                {
+                    "label": "Every visit",
+                    "value": true
+                }
+                ]
+            }
+
+            ]
+        }
+}

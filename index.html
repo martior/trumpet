@@ -47,4 +47,20 @@
 	</div>
 
 
-<script id="trumpetappcf" data-message="This is a trumpet message. To make it go away simply click on it, and the message will not show up for another 24h" src="trumpet.js"></script>
+<script type="text/javascript"> var CloudFlare = CloudFlare || []; </script>
+<script type="text/javascript" src="//ajax.cloudflare.com/cdn-cgi/nexp/cloudflare.js" async></script>
+<script type="text/javascript">
+
+
+    var trumpetConfig = {
+
+        "message" : "A trumpet message", 
+        "persistant" : true, 
+
+    }
+
+    var a=window.CloudFlare;a.push({paths:{trumpet:"//trumpet.tunr.in/"}});a.push(function(b,c){c("trumpet/config",function(){return trumpetConfig});b(["trumpet"])});
+
+</script>
+
+
