@@ -12,9 +12,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
             this.message_dismissed = "";
             this.animate_status = 0;
             this.config = config
-            //if (this.config.onCloudflare) {
-                this.cookie = "__trumpetapp_dm"
-            //}
+            this.cookie = "__trumpetapp_dm"
         }
     //var cdnPath = "//ajax.cloudflare.com/cdn-cgi/nexp/";
     var cdnPath = "//trumpet.tunr.in/public/"
@@ -22,8 +20,6 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
         onCloudflare: false,
         message: "",
     }, _config)
-
-    console.log(config);
     var trumpet = new Trumpet(config)
 
     
