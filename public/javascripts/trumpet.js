@@ -5,8 +5,8 @@
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudflare/dom", "cloudflare/path", "cloudflare/console", "trumpet/config"], function($, user, dom, path, _console, _config) {
-    var Trumpet = function SopaProtest(config) {
+CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudflare/dom", "cloudflare/path", "cloudflare/console", "trumpet/config"], function($, user, dom, path, console, _config) {
+    var Trumpet = function Trumpet(config) {
             this.trumpetEl = null;
             this.useFilter = /msie [678]/i.test(navigator.userAgent); // sniff, sniff
             this.message_dismissed = "";
@@ -104,17 +104,15 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
             this.trumpetEl.className = 'trumpet';
             document.getElementsByTagName("body")[0].appendChild(this.trumpetEl);
             this.message_dismissed = this.readCookie();
-            $(this.trumpetEl).click(function() {
-                this.animate(0);
-                this.message_dismissed = this.murmurhash3_32_gc(message, 1) + "";
-                this.createCookie(this.message_dismissed);
+            $(this.trumpetEl).click({self: this},function(e) {
+                self=e.data.self;
+                self.animate(0);
+                self.message_dismissed = self.murmurhash3_32_gc(self.config.message, 1) + "";
+                self.createCookie(self.message_dismissed);
             });
-            setTimeout(this.showMessage, 1000);
-
-
+            setTimeout(this.showMessage, 1000,this);
 
         },
-
         createCookie: function(value) {
             var exdate = new Date();
             exdate.setDate(exdate.getDate() + 1);
@@ -139,7 +137,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
                 this.trumpetEl.className = "trumpet trumpet-animate";
             } else {
                 this.trumpetEl.className = this.trumpetEl.className.replace(" trumpet-animate", "");
-                end();
+                this.end();
             }
         },
 
@@ -194,19 +192,18 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
         },
 
         end: function () {
-            setTimeout(function() {
-                this.trumpetEl.className = "trumpet";
-                this.trumpetEl.innerHTML = "";
-                this.config.message = "";
+            setTimeout(function(self) {
+                self.trumpetEl.className = "trumpet";
+                self.trumpetEl.innerHTML = "";
+                self.config.message = "";
 
-            }, 500);
+            }, 500,this);
         },
 
-
-        showMessage: function() {
-            if (this.message_dismissed != this.murmurhash3_32_gc(this.config.message, 1) + "") {
-                this.trumpetEl.innerHTML = this.config.message;
-                this.animate(1);
+        showMessage: function(self) {
+            if (self.message_dismissed != self.murmurhash3_32_gc(self.config.message, 1) + "") {
+                self.trumpetEl.innerHTML = self.config.message;
+                self.animate(1);
             }
 
         }
