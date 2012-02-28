@@ -16,8 +16,8 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
                 this.cookie = "__trumpetapp_dm"
             }
         }
-    var cdnPath = "//ajax.cloudflare.com/cdn-cgi/nexp/";
-
+    //var cdnPath = "//ajax.cloudflare.com/cdn-cgi/nexp/";
+    var cdnPath = //trumpet.tunr.in/public/
     var config = $.extend({
         selector: "header, h1, h2, h3, p, li, span, em",
         onCloudflare: false,
