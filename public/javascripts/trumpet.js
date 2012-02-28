@@ -201,7 +201,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
         },
 
         showMessage: function(self) {
-            if (self.message_dismissed != self.murmurhash3_32_gc(self.config.message, 1) + "") {
+            if (self.config.persistant || (self.message_dismissed != self.murmurhash3_32_gc(self.config.message, 1) + "")) {
                 self.trumpetEl.innerHTML = self.config.message;
                 self.animate(1);
             }
