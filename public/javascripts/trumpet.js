@@ -17,6 +17,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
       off = function (obj,type,fn) { obj.detachEvent('on'+type,fn) };
     }
     
+
     var Trumpet = function Trumpet(config) {
             this.trumpetEl = null;
             this.useFilter = /msie [678]/i.test(navigator.userAgent); // sniff, sniff
@@ -25,7 +26,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
             this.config = config
             this.cookie = "__trumpetapp_dm"
         }
-	var trumpet = new Trumpet(_config)
+    var trumpet = new Trumpet(_config)
 
 
     Trumpet.prototype.activate = function() {
@@ -35,16 +36,16 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
     }
 
     Trumpet.prototype.setup = function() {
-		var theme = document.createElement('style');
-		theme.setAttribute("type", "text/css")
-		var style = ".trumpet { position: absolute; -moz-transition: all 0.6s ease-in-out; -webkit-transition: all 0.6s ease-in-out; -ms-transition: all 0.6s ease-in-out; -o-transition: all 0.6s ease-in-out; transition: all 0.6s ease-in-out; z-index: -1; font-family: Helvetica Neue, Helvetica, san-serif; font-size: 18px; top: -50px; left: 0; opacity: 0; filter: progid:dximagetransform.microsoft.alpha(Opacity=0); width: 100%; color: #DDD; padding: 5px; text-align: center; background-color: #333; border-bottom: 1px solid black; } .trumpet.trumpet-animate, .trumpet.trumpet-js-animate { z-index: 100000; top: 0px; } .trumpet.trumpet-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } .trumpet.trumpet-js-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-js-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } ";
-		if(theme.styleSheet){
-		    theme.styleSheet.cssText = style;
-		}
-		else{
-		    theme.innerHTML = style;
-		}
-		document.getElementsByTagName("head")[0].appendChild(theme);
+        var theme = document.createElement('style');
+        theme.setAttribute("type", "text/css")
+        var style = ".trumpet { position: absolute; -moz-transition: all 0.6s ease-in-out; -webkit-transition: all 0.6s ease-in-out; -ms-transition: all 0.6s ease-in-out; -o-transition: all 0.6s ease-in-out; transition: all 0.6s ease-in-out; z-index: -1; font-family: Helvetica Neue, Helvetica, san-serif; font-size: 18px; top: -50px; left: 0; opacity: 0; filter: progid:dximagetransform.microsoft.alpha(Opacity=0); width: 100%; color: #DDD; padding: 5px; text-align: center; background-color: #333; border-bottom: 1px solid black; } .trumpet.trumpet-animate, .trumpet.trumpet-js-animate { z-index: 100000; top: 0px; } .trumpet.trumpet-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } .trumpet.trumpet-js-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-js-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } ";
+        if(theme.styleSheet){
+            theme.styleSheet.cssText = style;
+        }
+        else{
+            theme.innerHTML = style;
+        }
+        document.getElementsByTagName("head")[0].appendChild(theme);
 
         var transitionSupported = (function(style) {
             var prefixes = ['MozT', 'WebkitT', 'OT', 'msT', 'KhtmlT', 't'];
@@ -78,7 +79,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
         }
 
     }
-		
+        
 
     Trumpet.prototype.animate = function(level) {
         this.animate_status = level;
@@ -217,7 +218,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
 
         return h1 >>> 0;
     }
-	
+    
     if (!window.jasmine) {
         trumpet.activate();
     }
