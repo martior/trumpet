@@ -21,65 +21,14 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
         message: "",
     }, _config)
     var trumpet = new Trumpet(config)
-    //begin extend
+
+
     $.extend(Trumpet.prototype, {
 
         activate: function() {
             if (this.config.message != "") {
                 this.setup();
             }
-        },
-
-
-        murmurhash3_32_gc: function(key, seed) {
-            var remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i;
-
-            remainder = key.length & 3; // key.length % 4
-            bytes = key.length - remainder;
-            h1 = seed;
-            c1 = 0xcc9e2d51;
-            c2 = 0x1b873593;
-            i = 0;
-
-            while (i < bytes) {
-                k1 = ((key.charCodeAt(i) & 0xff)) | ((key.charCodeAt(++i) & 0xff) << 8) | ((key.charCodeAt(++i) & 0xff) << 16) | ((key.charCodeAt(++i) & 0xff) << 24);
-                ++i;
-
-                k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
-                k1 = (k1 << 15) | (k1 >>> 17);
-                k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
-
-                h1 ^= k1;
-                h1 = (h1 << 13) | (h1 >>> 19);
-                h1b = ((((h1 & 0xffff) * 5) + ((((h1 >>> 16) * 5) & 0xffff) << 16))) & 0xffffffff;
-                h1 = (((h1b & 0xffff) + 0x6b64) + ((((h1b >>> 16) + 0xe654) & 0xffff) << 16));
-            }
-
-            k1 = 0;
-
-            switch (remainder) {
-            case 3:
-                k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
-            case 2:
-                k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
-            case 1:
-                k1 ^= (key.charCodeAt(i) & 0xff);
-
-                k1 = (((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16)) & 0xffffffff;
-                k1 = (k1 << 16) | (k1 >>> 16);
-                k1 = (((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16)) & 0xffffffff;
-                h1 ^= k1;
-            }
-
-            h1 ^= key.length;
-
-            h1 ^= h1 >>> 16;
-            h1 = (((h1 & 0xffff) * 0x85ebca6b) + ((((h1 >>> 16) * 0x85ebca6b) & 0xffff) << 16)) & 0xffffffff;
-            h1 ^= h1 >>> 13;
-            h1 = ((((h1 & 0xffff) * 0xc2b2ae35) + ((((h1 >>> 16) * 0xc2b2ae35) & 0xffff) << 16))) & 0xffffffff;
-            h1 ^= h1 >>> 16;
-
-            return h1 >>> 0;
         },
 
         setup: function() {
@@ -119,23 +68,14 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
             this.showMessage(this);
 
         },
-        createCookie: function(value) {
-            var exdate = new Date();
-            exdate.setDate(exdate.getDate() + 1);
-            var c_value = escape(value) + "; expires=" + exdate.toUTCString();
-            document.cookie = this.cookie + "=" + value + "; path=/";
-        },
-
-        readCookie: function (name) {
-            var nameEQ = this.cookie + "=";
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        showMessage: function(self) {
+            if (self.config.persistant || (self.message_dismissed != self.murmurhash3_32_gc(self.config.message, 1) + "")) {
+                self.trumpetEl.innerHTML = self.config.message;
+                self.animate(1);
             }
-            return null;
+
         },
+		
 
         animate: function (level) {
             this.animate_status = level;
@@ -206,13 +146,75 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
             }, 500,this);
         },
 
-        showMessage: function(self) {
-            if (self.config.persistant || (self.message_dismissed != self.murmurhash3_32_gc(self.config.message, 1) + "")) {
-                self.trumpetEl.innerHTML = self.config.message;
-                self.animate(1);
+        createCookie: function(value) {
+            var exdate = new Date();
+            exdate.setDate(exdate.getDate() + 1);
+            var c_value = escape(value) + "; expires=" + exdate.toUTCString();
+            document.cookie = this.cookie + "=" + value + "; path=/";
+        },
+
+        readCookie: function (name) {
+            var nameEQ = this.cookie + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        },
+
+        murmurhash3_32_gc: function(key, seed) {
+            var remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i;
+
+            remainder = key.length & 3; // key.length % 4
+            bytes = key.length - remainder;
+            h1 = seed;
+            c1 = 0xcc9e2d51;
+            c2 = 0x1b873593;
+            i = 0;
+
+            while (i < bytes) {
+                k1 = ((key.charCodeAt(i) & 0xff)) | ((key.charCodeAt(++i) & 0xff) << 8) | ((key.charCodeAt(++i) & 0xff) << 16) | ((key.charCodeAt(++i) & 0xff) << 24);
+                ++i;
+
+                k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
+                k1 = (k1 << 15) | (k1 >>> 17);
+                k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
+
+                h1 ^= k1;
+                h1 = (h1 << 13) | (h1 >>> 19);
+                h1b = ((((h1 & 0xffff) * 5) + ((((h1 >>> 16) * 5) & 0xffff) << 16))) & 0xffffffff;
+                h1 = (((h1b & 0xffff) + 0x6b64) + ((((h1b >>> 16) + 0xe654) & 0xffff) << 16));
             }
 
-        }
+            k1 = 0;
+
+            switch (remainder) {
+            case 3:
+                k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
+            case 2:
+                k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
+            case 1:
+                k1 ^= (key.charCodeAt(i) & 0xff);
+
+                k1 = (((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16)) & 0xffffffff;
+                k1 = (k1 << 16) | (k1 >>> 16);
+                k1 = (((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16)) & 0xffffffff;
+                h1 ^= k1;
+            }
+
+            h1 ^= key.length;
+
+            h1 ^= h1 >>> 16;
+            h1 = (((h1 & 0xffff) * 0x85ebca6b) + ((((h1 >>> 16) * 0x85ebca6b) & 0xffff) << 16)) & 0xffffffff;
+            h1 ^= h1 >>> 13;
+            h1 = ((((h1 & 0xffff) * 0xc2b2ae35) + ((((h1 >>> 16) * 0xc2b2ae35) & 0xffff) << 16))) & 0xffffffff;
+            h1 ^= h1 >>> 16;
+
+            return h1 >>> 0;
+        },
+	
     }); //end extend
     if (!window.jasmine) {
         $("head").append(trumpet.styleSheet());
