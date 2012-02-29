@@ -63,11 +63,10 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
         this.trumpetEl.className = 'trumpet';
         document.getElementsByTagName("body")[0].appendChild(this.trumpetEl);
         this.message_dismissed = this.readCookie();
-        $(this.trumpetEl).click({self: this},function(e) {
-            self=e.data.self;
-            self.animate(0);
-            self.message_dismissed = self.murmurhash3_32_gc(self.config.message, 1) + "";
-            self.createCookie(self.message_dismissed);
+        on (this.trumpetEl,'click',function () {
+            trumpet.animate(0);
+            trumpet.message_dismissed = trumpet.murmurhash3_32_gc(trumpet.config.message, 1) + "";
+            trumpet.createCookie(trumpet.message_dismissed);
         });
         this.showMessage();
 
