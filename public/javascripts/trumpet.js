@@ -217,7 +217,6 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
 	
     }); //end extend
     if (!window.jasmine) {
-        $("head").append(trumpet.styleSheet());
         trumpet.activate();
     }
 
