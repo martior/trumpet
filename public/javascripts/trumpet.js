@@ -15,12 +15,7 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
             this.config = config
             this.cookie = "__trumpetapp_dm"
         }
-	
-    var config = $.extend({
-        onCloudflare: false,
-        message: "",
-    }, _config)
-    var trumpet = new Trumpet(config)
+	var trumpet = new Trumpet(_config)
 
 
     $.extend(Trumpet.prototype, {
