@@ -18,199 +18,196 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
 	var trumpet = new Trumpet(_config)
 
 
-    $.extend(Trumpet.prototype, {
+    Trumpet.prototype.activate = function() {
+        if (this.config.message != "") {
+            this.setup();
+        }
+    }
 
-        activate: function() {
-            if (this.config.message != "") {
-                this.setup();
+    Trumpet.prototype.setup = function() {
+		var theme = document.createElement('style');
+		theme.setAttribute("type", "text/css")
+		var style = ".trumpet { position: absolute; -moz-transition: all 0.6s ease-in-out; -webkit-transition: all 0.6s ease-in-out; -ms-transition: all 0.6s ease-in-out; -o-transition: all 0.6s ease-in-out; transition: all 0.6s ease-in-out; z-index: -1; font-family: Helvetica Neue, Helvetica, san-serif; font-size: 18px; top: -50px; left: 0; opacity: 0; filter: progid:dximagetransform.microsoft.alpha(Opacity=0); width: 100%; color: #DDD; padding: 5px; text-align: center; background-color: #333; border-bottom: 1px solid black; } .trumpet.trumpet-animate, .trumpet.trumpet-js-animate { z-index: 100000; top: 0px; } .trumpet.trumpet-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } .trumpet.trumpet-js-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-js-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } ";
+		if(theme.styleSheet){
+		    theme.styleSheet.cssText = style;
+		}
+		else{
+		    theme.innerHTML = style;
+		}
+		document.getElementsByTagName("head")[0].appendChild(theme);
+
+        var transitionSupported = (function(style) {
+            var prefixes = ['MozT', 'WebkitT', 'OT', 'msT', 'KhtmlT', 't'];
+            for (var i = 0, prefix; prefix = prefixes[i]; i++) {
+                if (prefix + 'ransition' in style) return true;
             }
-        },
+            return false;
+        }(document.body.style));
+        if (!transitionSupported){
+            this.animate = this.jsAnimateOpacity; // use js animation when no transition support
+        }
 
-        setup: function() {
-			var theme = document.createElement('style');
-			theme.setAttribute("type", "text/css")
-			var style = ".trumpet { position: absolute; -moz-transition: all 0.6s ease-in-out; -webkit-transition: all 0.6s ease-in-out; -ms-transition: all 0.6s ease-in-out; -o-transition: all 0.6s ease-in-out; transition: all 0.6s ease-in-out; z-index: -1; font-family: Helvetica Neue, Helvetica, san-serif; font-size: 18px; top: -50px; left: 0; opacity: 0; filter: progid:dximagetransform.microsoft.alpha(Opacity=0); width: 100%; color: #DDD; padding: 5px; text-align: center; background-color: #333; border-bottom: 1px solid black; } .trumpet.trumpet-animate, .trumpet.trumpet-js-animate { z-index: 100000; top: 0px; } .trumpet.trumpet-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } .trumpet.trumpet-js-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-js-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } ";
-			if(theme.styleSheet){
-			    theme.styleSheet.cssText = style;
-			}
-			else{
-			    theme.innerHTML = style;
-			}
-			document.getElementsByTagName("head")[0].appendChild(theme);
+        this.trumpetEl = document.createElement('div');
+        this.trumpetEl.id = 'trumpet_message';
+        this.trumpetEl.className = 'trumpet';
+        document.getElementsByTagName("body")[0].appendChild(this.trumpetEl);
+        this.message_dismissed = this.readCookie();
+        $(this.trumpetEl).click({self: this},function(e) {
+            self=e.data.self;
+            self.animate(0);
+            self.message_dismissed = self.murmurhash3_32_gc(self.config.message, 1) + "";
+            self.createCookie(self.message_dismissed);
+        });
+        this.showMessage();
 
-            var transitionSupported = (function(style) {
-                var prefixes = ['MozT', 'WebkitT', 'OT', 'msT', 'KhtmlT', 't'];
-                for (var i = 0, prefix; prefix = prefixes[i]; i++) {
-                    if (prefix + 'ransition' in style) return true;
-                }
-                return false;
-            }(document.body.style));
-            if (!transitionSupported){
-                this.animate = this.jsAnimateOpacity; // use js animation when no transition support
-            }
+    }
+    Trumpet.prototype.showMessage = function(self) {
+        if (this.config.persistant || (this.message_dismissed != this.murmurhash3_32_gc(this.config.message, 1) + "")) {
+            this.trumpetEl.innerHTML = this.config.message;
+            this.animate(1);
+        }
 
-            this.trumpetEl = document.createElement('div');
-            this.trumpetEl.id = 'trumpet_message';
-            this.trumpetEl.className = 'trumpet';
-            document.getElementsByTagName("body")[0].appendChild(this.trumpetEl);
-            this.message_dismissed = this.readCookie();
-            $(this.trumpetEl).click({self: this},function(e) {
-                self=e.data.self;
-                self.animate(0);
-                self.message_dismissed = self.murmurhash3_32_gc(self.config.message, 1) + "";
-                self.createCookie(self.message_dismissed);
-            });
-            this.showMessage();
-
-        },
-        showMessage: function(self) {
-            if (this.config.persistant || (this.message_dismissed != this.murmurhash3_32_gc(this.config.message, 1) + "")) {
-                this.trumpetEl.innerHTML = this.config.message;
-                this.animate(1);
-            }
-
-        },
+    }
 		
 
-        animate: function (level) {
-            this.animate_status = level;
-            if (level === 1) {
-                this.trumpetEl.className = "trumpet trumpet-animate";
-            } else {
-                this.trumpetEl.className = this.trumpetEl.className.replace(" trumpet-animate", "");
-                this.end();
-            }
-        },
+    Trumpet.prototype.animate = function(level) {
+        this.animate_status = level;
+        if (level === 1) {
+            this.trumpetEl.className = "trumpet trumpet-animate";
+        } else {
+            this.trumpetEl.className = this.trumpetEl.className.replace(" trumpet-animate", "");
+            this.end();
+        }
+    }
 
-        // if CSS Transitions not supported, fallback to JS Animation
-        setOpacity: function() {
-            if (this.useFilter) {
-                return function(opacity) {
-                    this.trumpetEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity = opacity * 100;
+    // if CSS Transitions not supported, fallback to JS Animation
+    Trumpet.prototype.setOpacity = function() {
+        if (this.useFilter) {
+            return function(opacity) {
+                this.trumpetEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity = opacity * 100;
+            }
+        } else {
+            return function(opacity) {
+                this.trumpetEl.style.opacity = String(opacity);
+            }
+        }
+    }
+
+    Trumpet.prototype.jsAnimateOpacity = function(level) {
+        var interval;
+        var opacity;
+        this.animate_status = level;
+
+        if (level === 1) {
+            opacity = 0;
+            this.trumpetEl.className = "trumpet trumpet-js-animate";
+            if (this.trumpetEl.filters) this.trumpetEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity = 0; // reset value so hover states work
+            if (window.trumpet.forceNew) {
+                opacity = this.useFilter ? this.trumpetEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity / 100 | 0 : this.trumpetEl.style.opacity | 0;
+            }
+            interval = setInterval(function() {
+                if (opacity < 1) {
+                    opacity += 0.1;
+                    if (opacity > 1) opacity = 1;
+                    this.setOpacity()(opacity);
+                } else {
+                    clearInterval(interval);
                 }
-            } else {
-                return function(opacity) {
-                    this.trumpetEl.style.opacity = String(opacity);
+            }, 100 / 20);
+        } else {
+            opacity = 1;
+            interval = setInterval(function() {
+                if (opacity > 0) {
+                    opacity -= 0.1;
+                    if (opacity < 0) opacity = 0;
+                    this.setOpacity()(opacity);
+                } else {
+                    this.trumpetEl.className = this.trumpetEl.className.replace("trumpet-js-animate", "");
+                    clearInterval(interval);
+                    this.end();
                 }
-            }
-        },
+            }, 100 / 20);
+        }
+    },
 
-        jsAnimateOpacity: function(level) {
-            var interval;
-            var opacity;
-            this.animate_status = level;
+    Trumpet.prototype.end = function () {
+        setTimeout(function(self) {
+            self.trumpetEl.className = "trumpet";
+            self.trumpetEl.innerHTML = "";
+            self.config.message = "";
 
-            if (level === 1) {
-                opacity = 0;
-                this.trumpetEl.className = "trumpet trumpet-js-animate";
-                if (this.trumpetEl.filters) this.trumpetEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity = 0; // reset value so hover states work
-                if (window.trumpet.forceNew) {
-                    opacity = this.useFilter ? this.trumpetEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity / 100 | 0 : this.trumpetEl.style.opacity | 0;
-                }
-                interval = setInterval(function() {
-                    if (opacity < 1) {
-                        opacity += 0.1;
-                        if (opacity > 1) opacity = 1;
-                        this.setOpacity()(opacity);
-                    } else {
-                        clearInterval(interval);
-                    }
-                }, 100 / 20);
-            } else {
-                opacity = 1;
-                interval = setInterval(function() {
-                    if (opacity > 0) {
-                        opacity -= 0.1;
-                        if (opacity < 0) opacity = 0;
-                        this.setOpacity()(opacity);
-                    } else {
-                        this.trumpetEl.className = this.trumpetEl.className.replace("trumpet-js-animate", "");
-                        clearInterval(interval);
-                        this.end();
-                    }
-                }, 100 / 20);
-            }
-        },
+        }, 500,this);
+    }
 
-        end: function () {
-            setTimeout(function(self) {
-                self.trumpetEl.className = "trumpet";
-                self.trumpetEl.innerHTML = "";
-                self.config.message = "";
+    Trumpet.prototype.createCookie = function(value) {
+        var exdate = new Date();
+        exdate.setDate(exdate.getDate() + 1);
+        var c_value = escape(value) + "; expires=" + exdate.toUTCString();
+        document.cookie = this.cookie + "=" + value + "; path=/";
+    }
 
-            }, 500,this);
-        },
+    Trumpet.prototype.readCookie = function (name) {
+        var nameEQ = this.cookie + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
 
-        createCookie: function(value) {
-            var exdate = new Date();
-            exdate.setDate(exdate.getDate() + 1);
-            var c_value = escape(value) + "; expires=" + exdate.toUTCString();
-            document.cookie = this.cookie + "=" + value + "; path=/";
-        },
+    Trumpet.prototype.murmurhash3_32_gc = function(key, seed) {
+        var remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i;
 
-        readCookie: function (name) {
-            var nameEQ = this.cookie + "=";
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-            }
-            return null;
-        },
+        remainder = key.length & 3; // key.length % 4
+        bytes = key.length - remainder;
+        h1 = seed;
+        c1 = 0xcc9e2d51;
+        c2 = 0x1b873593;
+        i = 0;
 
-        murmurhash3_32_gc: function(key, seed) {
-            var remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i;
+        while (i < bytes) {
+            k1 = ((key.charCodeAt(i) & 0xff)) | ((key.charCodeAt(++i) & 0xff) << 8) | ((key.charCodeAt(++i) & 0xff) << 16) | ((key.charCodeAt(++i) & 0xff) << 24);
+            ++i;
 
-            remainder = key.length & 3; // key.length % 4
-            bytes = key.length - remainder;
-            h1 = seed;
-            c1 = 0xcc9e2d51;
-            c2 = 0x1b873593;
-            i = 0;
+            k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
+            k1 = (k1 << 15) | (k1 >>> 17);
+            k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
 
-            while (i < bytes) {
-                k1 = ((key.charCodeAt(i) & 0xff)) | ((key.charCodeAt(++i) & 0xff) << 8) | ((key.charCodeAt(++i) & 0xff) << 16) | ((key.charCodeAt(++i) & 0xff) << 24);
-                ++i;
+            h1 ^= k1;
+            h1 = (h1 << 13) | (h1 >>> 19);
+            h1b = ((((h1 & 0xffff) * 5) + ((((h1 >>> 16) * 5) & 0xffff) << 16))) & 0xffffffff;
+            h1 = (((h1b & 0xffff) + 0x6b64) + ((((h1b >>> 16) + 0xe654) & 0xffff) << 16));
+        }
 
-                k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
-                k1 = (k1 << 15) | (k1 >>> 17);
-                k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
+        k1 = 0;
 
-                h1 ^= k1;
-                h1 = (h1 << 13) | (h1 >>> 19);
-                h1b = ((((h1 & 0xffff) * 5) + ((((h1 >>> 16) * 5) & 0xffff) << 16))) & 0xffffffff;
-                h1 = (((h1b & 0xffff) + 0x6b64) + ((((h1b >>> 16) + 0xe654) & 0xffff) << 16));
-            }
+        switch (remainder) {
+        case 3:
+            k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
+        case 2:
+            k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
+        case 1:
+            k1 ^= (key.charCodeAt(i) & 0xff);
 
-            k1 = 0;
+            k1 = (((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16)) & 0xffffffff;
+            k1 = (k1 << 16) | (k1 >>> 16);
+            k1 = (((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16)) & 0xffffffff;
+            h1 ^= k1;
+        }
 
-            switch (remainder) {
-            case 3:
-                k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
-            case 2:
-                k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
-            case 1:
-                k1 ^= (key.charCodeAt(i) & 0xff);
+        h1 ^= key.length;
 
-                k1 = (((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16)) & 0xffffffff;
-                k1 = (k1 << 16) | (k1 >>> 16);
-                k1 = (((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16)) & 0xffffffff;
-                h1 ^= k1;
-            }
+        h1 ^= h1 >>> 16;
+        h1 = (((h1 & 0xffff) * 0x85ebca6b) + ((((h1 >>> 16) * 0x85ebca6b) & 0xffff) << 16)) & 0xffffffff;
+        h1 ^= h1 >>> 13;
+        h1 = ((((h1 & 0xffff) * 0xc2b2ae35) + ((((h1 >>> 16) * 0xc2b2ae35) & 0xffff) << 16))) & 0xffffffff;
+        h1 ^= h1 >>> 16;
 
-            h1 ^= key.length;
-
-            h1 ^= h1 >>> 16;
-            h1 = (((h1 & 0xffff) * 0x85ebca6b) + ((((h1 >>> 16) * 0x85ebca6b) & 0xffff) << 16)) & 0xffffffff;
-            h1 ^= h1 >>> 13;
-            h1 = ((((h1 & 0xffff) * 0xc2b2ae35) + ((((h1 >>> 16) * 0xc2b2ae35) & 0xffff) << 16))) & 0xffffffff;
-            h1 ^= h1 >>> 16;
-
-            return h1 >>> 0;
-        },
+        return h1 >>> 0;
+    }
 	
-    }); //end extend
     if (!window.jasmine) {
         trumpet.activate();
     }
