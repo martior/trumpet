@@ -5,6 +5,7 @@
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 // 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudflare/dom", "cloudflare/path", "cloudflare/console", "trumpet/config"], function($, user, dom, path, console, _config) {
     var Trumpet = function Trumpet(config) {
             this.trumpetEl = null;
@@ -15,15 +16,11 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
             this.cookie = "__trumpetapp_dm"
         }
 	
-    var cdnPath = "//ajax.cloudflare.com/cdn-cgi/nexp/";
     var config = $.extend({
         onCloudflare: false,
         message: "",
     }, _config)
     var trumpet = new Trumpet(config)
-	if (!config.onCloudflare){
-		cdnPath = "//trumpet.tunr.in/public/"
-    }
     //begin extend
     $.extend(Trumpet.prototype, {
 
@@ -33,9 +30,6 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
             }
         },
 
-        styleSheet : function(){
-            return $('<link rel="stylesheet" media="screen" href="' + cdnPath + 'stylesheets/trumpet.css">');
-        },
 
         murmurhash3_32_gc: function(key, seed) {
             var remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i;
@@ -89,6 +83,17 @@ CloudFlare.define("trumpet", ["cloudflare/jquery1.7", "cloudflare/user", "cloudf
         },
 
         setup: function() {
+			var theme = doc.createElement('style');
+			theme.setAttribute("type", "text/css")
+			var style = ".trumpet { position: absolute; -moz-transition: all 0.6s ease-in-out; -webkit-transition: all 0.6s ease-in-out; -ms-transition: all 0.6s ease-in-out; -o-transition: all 0.6s ease-in-out; transition: all 0.6s ease-in-out; z-index: -1; font-family: Helvetica Neue, Helvetica, san-serif; font-size: 18px; top: -50px; left: 0; opacity: 0; filter: progid:dximagetransform.microsoft.alpha(Opacity=0); width: 100%; color: #DDD; padding: 5px; text-align: center; background-color: #333; border-bottom: 1px solid black; } .trumpet.trumpet-animate, .trumpet.trumpet-js-animate { z-index: 100000; top: 0px; } .trumpet.trumpet-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } .trumpet.trumpet-js-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-js-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } ";
+			if(theme.styleSheet){
+			    theme.styleSheet.cssText = style;
+			}
+			else{
+			    theme.innerHTML = style;
+			}
+			document.getElementsByTagName("head")[0].appendChild(theme);
+
             var transitionSupported = (function(style) {
                 var prefixes = ['MozT', 'WebkitT', 'OT', 'msT', 'KhtmlT', 't'];
                 for (var i = 0, prefix; prefix = prefixes[i]; i++) {
