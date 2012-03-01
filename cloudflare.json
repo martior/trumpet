@@ -9,7 +9,7 @@
     {
         "name" : "Martin Reistadbakk",
         "email" : "martin@reistadbakk.com"
-    },
+    }
     ],
         "repository" : {
             "type" : "git",
