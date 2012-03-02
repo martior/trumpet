@@ -2,14 +2,14 @@
     "name": "Trumpet",
     "description": "Enables webmaster to speak to their users by displaying text on a banner on top of their site. Use for site maintenance messages.",
     "keywords" : [
-        "webmaster-tools"
+        "webmaster"
         ],
     "version": "0.0.1",
     "contributors": [
     {
         "name" : "Martin Reistadbakk",
         "email" : "martin@reistadbakk.com"
-    },
+    }
     ],
         "repository" : {
             "type" : "git",
