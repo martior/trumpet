@@ -17,7 +17,6 @@
         },
         "main" : "./public/javascripts/trumpet.js",
         "dependencies" : {
-            "jquery"    :  "~1.7"
         },
         "licenses" : [
         {
