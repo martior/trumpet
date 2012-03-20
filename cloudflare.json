@@ -49,11 +49,11 @@
                 "options": [
                 {
                     "label": "First visit only",
-                    "value": false
+                    "value": ""
                 },
                 {
                     "label": "Every visit",
-                    "value": true
+                    "value": "on"
                 }
                 ]
             }
