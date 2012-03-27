@@ -72,7 +72,7 @@ CloudFlare.define("trumpet", ["trumpet/config"], function(_config) {
 
     }
     Trumpet.prototype.showMessage = function(self) {
-        if (this.config.persistant || (this.message_dismissed != this.murmurhash3_32_gc(this.config.message, 1) + "")) {
+        if (this.config.persistent == "on" || (this.message_dismissed != this.murmurhash3_32_gc(this.config.message, 1) + "")) {
             this.trumpetEl.innerHTML = this.config.message;
             this.animate(1);
         }

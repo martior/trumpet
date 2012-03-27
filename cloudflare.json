@@ -37,22 +37,22 @@
             "interface": [
             {
                 "id": "message",
-                "name": "Displya text",
+                "name": "Display text",
                 "description": "The text you would like displayed on your site. Leave blank to disable Trumpet.",
                 "type": "string"
             },
             {
                 "id": "persistent",
-                "name": "Persistence",
-                "description": "Text is shown on first visit only. If you would like this to happen on every visit, switch to the Persistent mode.",
+                "name": "Allow user to dismiss the message",
+                "description": "If the user is allowed to dismiss the message, the message is not displayed for 24 hours if the user clicks on the message to dismiss it.",
                 "type": "select",
                 "options": [
                 {
-                    "label": "First visit only",
+                    "label": "User can dismiss message",
                     "value": ""
                 },
                 {
-                    "label": "Every visit",
+                    "label": "Message is displayed on every visit and page load",
                     "value": "on"
                 }
                 ]
