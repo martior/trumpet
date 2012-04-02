@@ -1,6 +1,8 @@
 {
     "name": "Trumpet",
-    "description": "This app lets you put a small message at the top of your site.",
+    "description": "This app lets you put a small message at the top of your site. 
+	                The users of the site can dismiss the message by clicking on it, 
+					the message will then not be displayed for 24 hours.",
     "keywords" : [
         "webmaster"
         ],

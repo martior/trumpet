@@ -10,5 +10,5 @@ Trumpet can be used to:
 
 * Proactively handle service disruptions, keeping your visitors informed
 
-For comments or support please contact me by <a href="mailto:martior+trumpet@gmail.com">email</a> or <a href="http://twitter.com/martior">Twitter</a>.
+For comments or support please contact me by <a href="mailto:martin+trumpet@blaastolen.com">email</a> or <a href="http://twitter.com/martior">Twitter</a>.
 
