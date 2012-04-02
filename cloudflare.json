@@ -42,24 +42,7 @@
                 "name": "Display text",
                 "description": "The text you would like displayed on your site. Leave blank to disable Trumpet.",
                 "type": "string"
-            },
-            {
-                "id": "persistent",
-                "name": "Allow user to dismiss the message",
-                "description": "If the user is allowed to dismiss the message, the message is not displayed for 24 hours if the user clicks on the message to dismiss it.",
-                "type": "select",
-                "options": [
-                {
-                    "label": "User can dismiss message",
-                    "value": ""
-                },
-                {
-                    "label": "Message is displayed on every visit and page load",
-                    "value": "on"
-                }
-                ]
             }
-
             ]
         }
 }
