@@ -153,7 +153,7 @@ CloudFlare.define("trumpet", ["trumpet/config"], function(_config) {
         var exdate = new Date();
         exdate.setDate(exdate.getDate() + 1);
         var c_value = escape(value) + "; expires=" + exdate.toUTCString();
-        document.cookie = this.cookie + "=" + value + "; path=/";
+        document.cookie = this.cookie + "=" + c_value + "; path=/";
     }
 
     Trumpet.prototype.readCookie = function (name) {
