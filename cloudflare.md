@@ -10,5 +10,7 @@ Trumpet can be used to:
 
 * Proactively handle service disruptions, keeping your visitors informed
 
+![Screenshot of trumpet](/images/apps/trumpet/trumpet_screenshot.png "Screenshot")
+
 For comments or support please contact me by <a href="mailto:martin+trumpet@blaastolen.com">email</a> or <a href="http://twitter.com/martior">Twitter</a>.
 
