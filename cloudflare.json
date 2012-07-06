@@ -31,7 +31,10 @@
                 "logos" : {
                     "200px": "./public/images/trumpet_logo-200.png",
                     "132px": "./public/images/trumpet_logo-132.png"
-                }
+                },
+                "detail_page" : [
+                	"./public/images/trumpet_screenshot.png"
+                ]
             },
             "payment": {},
             "details": {
