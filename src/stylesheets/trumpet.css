@@ -7,35 +7,36 @@
   transition: all 0.6s ease-in-out;
   z-index: -1;
   font-family: Helvetica Neue, Helvetica, san-serif;
-  font-size: 18px;
-  top: -50px;
+  font-size: 22px;
+  top: -55px;
   left: 0;
-  opacity: 0;
-  filter: progid:dximagetransform.microsoft.alpha(Opacity=0);
   width: 100%;
-  color: #222;
-  padding: 5px;
+  color: '+colortext+';
+  padding: 12px 5px;
   text-align: center;
-  background-color: #999;
-  border-bottom: 1px solid #777;
+  background-color: '+colorbackground+';
+  -moz-box-shadow:  1px 1px 2px 3px #999;
+  -webkit-box-shadow: 1px 1px 2px 3px #999;
+  box-shadow:         1px 1px 2px 3px #999;
 }
-.trumpet.trumpet-animate, .trumpet.trumpet-js-animate {
+.trumpet a{
+ color: '+colorlink+';
+}
+#trumpet_logo{
+  position: absolute;
+  left: 10px;
+  height: 20px;
+  width: 65px;
+  background: url('../images/trumpet_logo_transparent.png') top left no-repeat;
+}
+#trumpet_close{
+	position: absolute;
+  bottom: 10px;
+  right: 20px;
+  font-size: 10px;
+}
+
+.trumpet.trumpet-animate{
   z-index: 100000;
   top: 0px;
-}
-.trumpet.trumpet-animate {
-  opacity: 1;
-  filter: progid:dximagetransform.microsoft.alpha(Opacity=100);
-}
-.trumpet.trumpet-animate:hover {
-  opacity: 0.7;
-  filter: progid:dximagetransform.microsoft.alpha(Opacity=70);
-}
-.trumpet.trumpet-js-animate {
-  opacity: 1;
-  filter: progid:dximagetransform.microsoft.alpha(Opacity=100);
-}
-.trumpet.trumpet-js-animate:hover {
-  opacity: 0.7;
-  filter: progid:dximagetransform.microsoft.alpha(Opacity=70);
 }

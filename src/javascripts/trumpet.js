@@ -38,7 +38,10 @@ CloudFlare.define("trumpet", ["trumpet/config"], function(_config) {
     Trumpet.prototype.setup = function() {
         var theme = document.createElement('style');
         theme.setAttribute("type", "text/css")
-        var style = ".trumpet { position: absolute; -moz-transition: all 0.6s ease-in-out; -webkit-transition: all 0.6s ease-in-out; -ms-transition: all 0.6s ease-in-out; -o-transition: all 0.6s ease-in-out; transition: all 0.6s ease-in-out; z-index: -1; font-family: Helvetica Neue, Helvetica, san-serif; font-size: 18px; top: -50px; left: 0; opacity: 0; filter: progid:dximagetransform.microsoft.alpha(Opacity=0); width: 100%; color: #DDD; padding: 5px 0; text-align: center; background-color: #333; border-bottom: 1px solid black; } .trumpet.trumpet-animate, .trumpet.trumpet-js-animate { z-index: 100000; top: 0px; } .trumpet.trumpet-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } .trumpet.trumpet-js-animate { opacity: 1; filter: progid:dximagetransform.microsoft.alpha(Opacity=100); } .trumpet.trumpet-js-animate:hover { opacity: 0.7; filter: progid:dximagetransform.microsoft.alpha(Opacity=70); } ";
+		var colorbackground = this.config.colorbackground;
+		var colortext = this.config.colortext;
+		var colorlink = this.config.colorlink;
+        var style = "STYLEHERE";
         if(theme.styleSheet){
             theme.styleSheet.cssText = style;
         }
@@ -47,33 +50,39 @@ CloudFlare.define("trumpet", ["trumpet/config"], function(_config) {
         }
         document.getElementsByTagName("head")[0].appendChild(theme);
 
-        var transitionSupported = (function(style) {
-            var prefixes = ['MozT', 'WebkitT', 'OT', 'msT', 'KhtmlT', 't'];
-            for (var i = 0, prefix; prefix = prefixes[i]; i++) {
-                if (prefix + 'ransition' in style) return true;
-            }
-            return false;
-        }(document.body.style));
-        if (!transitionSupported){
-            this.animate = this.jsAnimateOpacity; // use js animation when no transition support
-        }
-
         this.trumpetEl = document.createElement('div');
-        this.trumpetEl.id = 'trumpet_message';
+        this.trumpetEl.id = 'trumpet';
         this.trumpetEl.className = 'trumpet';
         document.getElementsByTagName("body")[0].appendChild(this.trumpetEl);
+        var trumpet_logo = document.createElement('span');
+        trumpet_logo.id = 'trumpet_logo';
+        this.trumpetEl.appendChild(trumpet_logo);
+        var trumpet_message = document.createElement('span');
+        trumpet_message.id = 'trumpet_message';
+        this.trumpetEl.appendChild(trumpet_message);
+        var  trumpet_close = document.createElement('span');
+        trumpet_close.id = 'trumpet_close';
+        trumpet_close.innerHTML="click to close"
+        this.trumpetEl.appendChild(trumpet_close);
+
         this.message_dismissed = this.readCookie();
         on (this.trumpetEl,'click',function () {
             trumpet.animate(0);
             trumpet.message_dismissed = trumpet.murmurhash3_32_gc(trumpet.config.message, 1) + "";
             trumpet.createCookie(trumpet.message_dismissed);
         });
-        this.showMessage();
+        setTimeout(function() {trumpet.showMessage();},100);
+        
 
     }
     Trumpet.prototype.showMessage = function(self) {
         if (this.message_dismissed != this.murmurhash3_32_gc(this.config.message, 1) + "") {
-            this.trumpetEl.innerHTML = this.config.message;
+			var message = this.config.message;
+			console.log(this.config);
+			if (this.config.link != ""){
+				message = message + "<a href='"+this.config.link+"'>"+this.config.linktext+"</a>";
+			}
+            document.getElementById("trumpet_message").innerHTML = message;
             this.animate(1);
         }
 
@@ -90,55 +99,7 @@ CloudFlare.define("trumpet", ["trumpet/config"], function(_config) {
         }
     }
 
-    // if CSS Transitions not supported, fallback to JS Animation
-    Trumpet.prototype.setOpacity = function() {
-        if (this.useFilter) {
-            return function(opacity) {
-                this.trumpetEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity = opacity * 100;
-            }
-        } else {
-            return function(opacity) {
-                this.trumpetEl.style.opacity = String(opacity);
-            }
-        }
-    }
 
-    Trumpet.prototype.jsAnimateOpacity = function(level) {
-        var interval;
-        var opacity;
-        this.animate_status = level;
-
-        if (level === 1) {
-            opacity = 0;
-            this.trumpetEl.className = "trumpet trumpet-js-animate";
-            if (this.trumpetEl.filters) this.trumpetEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity = 0; // reset value so hover states work
-            if (window.trumpet.forceNew) {
-                opacity = this.useFilter ? this.trumpetEl.filters.item('DXImageTransform.Microsoft.Alpha').Opacity / 100 | 0 : this.trumpetEl.style.opacity | 0;
-            }
-            interval = setInterval(function() {
-                if (opacity < 1) {
-                    opacity += 0.1;
-                    if (opacity > 1) opacity = 1;
-                    this.setOpacity()(opacity);
-                } else {
-                    clearInterval(interval);
-                }
-            }, 100 / 20);
-        } else {
-            opacity = 1;
-            interval = setInterval(function() {
-                if (opacity > 0) {
-                    opacity -= 0.1;
-                    if (opacity < 0) opacity = 0;
-                    this.setOpacity()(opacity);
-                } else {
-                    this.trumpetEl.className = this.trumpetEl.className.replace("trumpet-js-animate", "");
-                    clearInterval(interval);
-                    this.end();
-                }
-            }, 100 / 20);
-        }
-    },
 
     Trumpet.prototype.end = function () {
         setTimeout(function(self) {
@@ -157,6 +118,7 @@ CloudFlare.define("trumpet", ["trumpet/config"], function(_config) {
     }
 
     Trumpet.prototype.readCookie = function (name) {
+        return null;
         var nameEQ = this.cookie + "=";
         var ca = document.cookie.split(';');
         for (var i = 0; i < ca.length; i++) {

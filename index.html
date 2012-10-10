@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+ <LINK href="public/stylesheets/trumpet.css" title="compact" rel="stylesheet" type="text/css">
+
 <style type="text/css">
 body {padding-top:2em;}
 </style>
@@ -26,13 +28,19 @@ body {padding-top:2em;}
 
 
 <script type="text/javascript"> var CloudFlare = CloudFlare || []; </script>
-<script type="text/javascript" src="//ajax.cloudflare.com/cdn-cgi/nexp/cloudflare.js" </script>
+<script type="text/javascript" src="public/javascripts/cloudflare.js" </script>
+<script type="text/javascript" src="public/javascripts/trumpet.js" </script>
 <script type="text/javascript">
 
     var trumpetConfig = {
-        "message" : "A trumpet message for testing", 
+        "message" : "A trumpet message for testing Lorem ipsum dolor sit amet", 
+		"link" : "http://www.vg.no",
+		"linktext" : "Read More...",
+		"colorbackground" : "#FFF",
+		"colortext" : "#000",
+		"colorlink" : "#00F",
     }
 
-    var a=window.CloudFlare;a.push({paths:{trumpet:"//trumpet.blaastolen.no/public/javascripts/"}});a.push(function(b,c){c("trumpet/config",function(){return trumpetConfig});b(["trumpet"])});
+    var a=window.CloudFlare;a.push({paths:{trumpet:"public/javascripts/"}});a.push(function(b,c){c("trumpet/config",function(){return trumpetConfig});b(["trumpet"])});
 
 </script>
