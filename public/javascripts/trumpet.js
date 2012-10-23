@@ -30,7 +30,7 @@ CloudFlare.define("trumpet", ["cloudflare/config"], function(_config) {
 
 
     Trumpet.prototype.activate = function() {
-        if (this.config.message != "") {
+        if (typeof this.config.message == "string" && this.config.message != "") {
             this.setup();
         }
     }
