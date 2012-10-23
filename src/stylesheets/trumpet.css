@@ -11,16 +11,16 @@
   top: -55px;
   left: 0;
   width: 100%;
-  color: '+colortext+';
+  color: "+colortext+";
   padding: 12px 5px;
   text-align: center;
-  background-color: '+colorbackground+';
+  background-color: "+colorbackground+";
   -moz-box-shadow:  1px 1px 2px 3px #999;
   -webkit-box-shadow: 1px 1px 2px 3px #999;
   box-shadow:         1px 1px 2px 3px #999;
 }
 .trumpet a{
- color: '+colorlink+';
+ color: "+colorlink+";
 }
 #trumpet_logo{
   position: absolute;

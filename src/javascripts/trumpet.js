@@ -80,7 +80,7 @@ CloudFlare.define("trumpet", ["trumpet/config"], function(_config) {
 			var message = this.config.message;
 			console.log(this.config);
 			if (this.config.link != ""){
-				message = message + "<a href='"+this.config.link+"'>"+this.config.linktext+"</a>";
+				message = message + " <a href='"+this.config.link+"'>"+this.config.linktext+"</a>";
 			}
             document.getElementById("trumpet_message").innerHTML = message;
             this.animate(1);
