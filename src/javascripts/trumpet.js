@@ -129,6 +129,9 @@ CloudFlare.define("trumpet", ["cloudflare/config"], function(_config) {
         return null;
     }
 
+    // This function is Copyright (c) 2011 Gary Court
+    // Released with an MIT License, see:
+    // https://github.com/garycourt/murmurhash-js
     Trumpet.prototype.murmurhash3_32_gc = function(key, seed) {
         var remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i;
 
