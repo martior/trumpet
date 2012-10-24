@@ -48,6 +48,36 @@
                 "name": "Display text",
                 "description": "The text you would like displayed on your site. Leave blank to disable Trumpet.",
                 "type": "string"
+                },
+            {
+                "id": "link",
+                "name": "Link (premium only)",
+                "description": "A URL with more information. Should start with 'http://'.",
+                "type": "string"
+                },
+            {
+                "id": "linktext (premium only)",
+                "name": "Link Text",
+                "description": "The text you want to be tunred into a link. e.g. 'Read more...'.",
+                "type": "string"
+                },
+            {
+                "id": "colorbackground (premium only)",
+                "name": "Background Color",
+                "description": "The background color of the status bar.",
+                "type": "string"
+                },
+            {
+                "id": "colortext (premium only)",
+                "name": "Text Color",
+                "description": "The color of the text.",
+                "type": "string"
+                },
+            {
+                "id": "colorlink (premium only)",
+                "name": "LinkCcolor",
+                "description": "The color of the link text",
+                "type": "string"
             }
             ]
         }
