@@ -20,14 +20,13 @@ CloudFlare.define("trumpet", ["trumpet/config"], function(_config) {
 
     var Trumpet = function Trumpet(config) {
             this.trumpetEl = null;
-            this.useFilter = /msie [678]/i.test(navigator.userAgent); // sniff, sniff
             this.message_dismissed = "";
             this.animate_status = 0;
             this.config = config
             this.cookie = "__trumpetapp_dm"
         }
     var trumpet = new Trumpet(_config)
-
+    console.log("test");
 
     Trumpet.prototype.activate = function() {
         if (typeof this.config.message == "string" && this.config.message != "") {
