@@ -58,28 +58,44 @@
                 "type": "string"
                 },
             {
-                "id": "linktext (premium only)",
-                "name": "Link Text",
+                "id": "linktext",
+                "name": "Link Text (premium only)",
                 "description": "The text you want to be tunred into a link. e.g. 'Read more...'.",
                 "type": "string"
                 },
             {
-                "id": "colorbackground (premium only)",
-                "name": "Background Color",
+                "id": "colorbackground",
+                "name": "Background Color (premium only)",
                 "description": "The background color of the status bar.",
                 "type": "string"
                 },
             {
-                "id": "colortext (premium only)",
-                "name": "Text Color",
+                "id": "colortext",
+                "name": "Text Color (premium only)",
                 "description": "The color of the text.",
                 "type": "string"
                 },
             {
-                "id": "colorlink (premium only)",
-                "name": "LinkCcolor",
+                "id": "colorlink",
+                "name": "Link Color ",
                 "description": "The color of the link text",
                 "type": "string"
+            }
+            {
+                "id": "branded",
+                "type": "select",
+                "name": "Display Trumpet Logo? (premium only)",
+                "description": "Choose whether to buy a ticket",
+                "options": [
+                    {
+                        "label": "Yes, display the logo!",
+                        "value": "true"
+                    },
+                    {
+                        "label": "No, do not display the logo",
+                        "value": ""
+                    }
+                ]
             }
             ]
         }

@@ -19,6 +19,15 @@
   -webkit-box-shadow: 1px 1px 2px 3px #999;
   box-shadow:         1px 1px 2px 3px #999;
 }
+.trumpet:hover{
+  opacity: 0.7;
+  filter: progid:dximagetransform.microsoft.alpha(Opacity=70);
+}
+#trumpet_message{
+  display: block;
+  padding-left: 65px;
+  padding-right: 65px;
+}
 .trumpet a{
  color: "+colorlink+";
 }
@@ -27,13 +36,24 @@
   left: 10px;
   height: 20px;
   width: 65px;
-  background: url('../images/trumpet_logo_transparent.png') top left no-repeat;
 }
+
+#trumpet_logo div {
+  position: relative;
+  z-index: 1;
+  width: 35;
+  height: 22;
+}
+
 #trumpet_close{
 	position: absolute;
-  bottom: 10px;
+  top: 12px;
   right: 20px;
-  font-size: 10px;
+  font-size: 15px;
+  font-weight:bold;
+  cursor:pointer;
+  opacity: 0.4;
+  filter: progid:dximagetransform.microsoft.alpha(Opacity=40);
 }
 
 .trumpet.trumpet-animate{

@@ -26,7 +26,6 @@ CloudFlare.define("trumpet", ["trumpet/config"], function(_config) {
             this.cookie = "__trumpetapp_dm"
         }
     var trumpet = new Trumpet(_config)
-    console.log("test");
 
     Trumpet.prototype.activate = function() {
         if (typeof this.config.message == "string" && this.config.message != "") {
@@ -55,29 +54,31 @@ CloudFlare.define("trumpet", ["trumpet/config"], function(_config) {
         document.getElementsByTagName("body")[0].appendChild(this.trumpetEl);
         var trumpet_logo = document.createElement('span');
         trumpet_logo.id = 'trumpet_logo';
+        if(this.config.branded=="true"){
+            trumpet_logo.innerHTML="<a href='http://cloudflare.com/apps/trumpet' target='_blank' ><img src='public/images/trumpet.svg' title='powered by Trumpet' width='35' height='22'></a>"    
+        }
         this.trumpetEl.appendChild(trumpet_logo);
         var trumpet_message = document.createElement('span');
         trumpet_message.id = 'trumpet_message';
         this.trumpetEl.appendChild(trumpet_message);
         var  trumpet_close = document.createElement('span');
         trumpet_close.id = 'trumpet_close';
-        trumpet_close.innerHTML="click to close"
+        trumpet_close.innerHTML="x"
         this.trumpetEl.appendChild(trumpet_close);
 
         this.message_dismissed = this.readCookie();
         on (this.trumpetEl,'click',function () {
             trumpet.animate(0);
             trumpet.message_dismissed = trumpet.murmurhash3_32_gc(trumpet.config.message, 1) + "";
-            trumpet.createCookie(trumpet.message_dismissed);
         });
         setTimeout(function() {trumpet.showMessage();},100);
         
 
     }
     Trumpet.prototype.showMessage = function(self) {
+
         if (this.message_dismissed != this.murmurhash3_32_gc(this.config.message, 1) + "") {
 			var message = this.config.message;
-			console.log(this.config);
 			if (this.config.link != ""){
 				message = message + " <a href='"+this.config.link+"'>"+this.config.linktext+"</a>";
 			}
@@ -117,7 +118,7 @@ CloudFlare.define("trumpet", ["trumpet/config"], function(_config) {
     }
 
     Trumpet.prototype.readCookie = function (name) {
-        return null;
+        return null; //zzz
         var nameEQ = this.cookie + "=";
         var ca = document.cookie.split(';');
         for (var i = 0; i < ca.length; i++) {

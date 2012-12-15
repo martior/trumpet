@@ -14,13 +14,14 @@
 
       var trumpetConfig = {
       "message" : "A trumpet message for testing Lorem ipsum dolor sit amet", 
-  		"link" : "http://www.vg.no",
+  		"link" : "http://www.cloudflare.com",
   		"linktext" : "Read More...",
-  		"colorbackground" : "#FFF",
-  		"colortext" : "#000",
-  		"colorlink" : "#00F",
+  		"colorbackground" : "#333",
+  		"colortext" : "#EEE",
+  		"colorlink" : "#AAE",
+      "branded" : "",
       }
-      var a=window.CloudFlare;a.push({paths:{trumpet:"../public/javascripts/"}});a.push(function(b,c){c("trumpet/config",function(){return trumpetConfig});b(["trumpet"])});
+      var a=window.CloudFlare;a.push({paths:{trumpet:"public/javascripts/"}});a.push(function(b,c){c("trumpet/config",function(){return trumpetConfig});b(["trumpet"])});
   </script>
   
 </head>
