@@ -79,7 +79,7 @@
                 "name": "Link Color ",
                 "description": "The color of the link text",
                 "type": "string"
-            }
+            },
             {
                 "id": "branded",
                 "type": "select",
